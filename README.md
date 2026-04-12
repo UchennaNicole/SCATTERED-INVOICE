@@ -87,9 +87,10 @@ Answer what happened, why it matters, and what was discovered in 3–4 sentences
 
 | Flag | Technique Category | MITRE ID | Priority |
 |-----:|-------------------|----------|----------|
-| 1 | MMITRE ATT&CK: T1621 – Multi-Factor Authentication Request Generation (MFA Fatigue / Push Bombing)| T1078 -Valid Accounts & T1114.003 – Email Forwarding Rule & T1564.008 – Hide Artifacts: Email Hiding Rules & T1657 – Financial Theft | 🔴 MITRE Priority: P1 (Critical)|
-| 2 | MMITRE ATT&CK: T1078 – Valid Accounts | T1621 – Multi-Factor Authentication Request Generation | 🟠 MITRE Priority: P2 (High) |
-| 3 | <Placeholder> | <Placeholder> | <Placeholder> |
+| 1 | MITRE ATT&CK: T1621 – Multi-Factor Authentication Request Generation (MFA Fatigue / Push Bombing)| T1078 -Valid Accounts & T1114.003 – Email Forwarding Rule & T1564.008 – Hide Artifacts: Email Hiding Rules & T1657 – Financial Theft | 🔴 MITRE Priority: P1 (Critical)|
+| 2 | MITRE ATT&CK: T1078 – Valid Accounts | T1621 – Multi-Factor Authentication Request Generation | 🟠 MITRE Priority: P2 (High) |
+| 3 | MITRE ATT&CK: T1078 – Valid Accounts | T1078.004 – Valid Accounts: Cloud Accounts | 🟠 MITRE Priority: P2 (High)
+ |
 | 4 | <Placeholder> | <Placeholder> | <Placeholder> |
 | 5 | <Placeholder> | <Placeholder> | <Placeholder> |
 | 6 | <Placeholder> | <Placeholder> | <Placeholder> |
@@ -209,23 +210,23 @@ Query `SigninLogs` for successful authentications (`ResultType == 0`) and compar
 <summary id="-flag-3">🚩 <strong>Flag 3: <Technique Name></strong></summary>
 
 ### 🎯 Objective
-<What the attacker was trying to accomplish>
+The attacker aimed to validate and maintain unauthorized access to the compromised account by authenticating from attacker-controlled infrastructure located outside the user’s normal geographic region.
 
 ### 📌 Finding
-<High-level description of the activity>
+Successful sign-ins to Mark Smith’s account originated from the Netherlands (NL), which deviates from the user’s expected geographic location. This confirms the use of attacker infrastructure and supports evidence of account compromise via MFA fatigue.
 
 ### 🔍 Evidence
 
 | Field | Value |
 |------|-------|
-| Host | <Placeholder> |
-| Timestamp | <Placeholder> |
-| Process | <Placeholder> |
-| Parent Process | <Placeholder> |
-| Command Line | <Placeholder> |
+| Host | Azure AD / Microsoft 365 (cloud identity) |
+| Timestamp | 2026-02-25 ~22:12–22:25 UTC |
+| Process | Azure AD Sign-in (interactive authentication) |
+| Parent Process | External authentication request (MFA push) |
+| Command Line | N/A — cloud-based authentication event |
 
 ### 💡 Why it matters
-<Explain impact, risk, and relevance>
+Geolocation anomalies are a strong indicator of compromise, especially when tied to successful authentication events. A legitimate user operating in one country suddenly authenticating from another (NL) suggests attacker-controlled access. This is a key pivot point to identify attacker infrastructure and confirm unauthorized activity.
 
 ### 🔧 KQL Query Used
 SigninLogs
@@ -237,9 +238,10 @@ SigninLogs
 <img width="2120" height="1134" alt="image" src="https://github.com/user-attachments/assets/59dec488-082c-4a09-9392-4e0ce5e706ee" />
 
 ### 🛠️ Detection Recommendation
+Implement detections for impossible travel and anomalous geolocation sign-ins. Correlate successful logins from foreign IPs with MFA events and user behavior baselines. Flag accounts where new countries appear without prior history, especially for high-risk users like finance personnel.
 
 **Hunting Tip:**  
-<Actionable guidance for defenders>
+Use `SigninLogs` to compare historical login locations against current activity. Pivot on `IPAddress` and `Location` fields to identify new geographies. Combine with `ResultType == 0` (successful logins) and investigate any first-time country appearances tied to sensitive accounts.
 
 </details>
 
