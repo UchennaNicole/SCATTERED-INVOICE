@@ -228,10 +228,13 @@ SigninLogs
 <Explain impact, risk, and relevance>
 
 ### 🔧 KQL Query Used
-<Add KQL here>
+SigninLogs
+| where UserPrincipalName == "m.smith@lognpacific.org"
+| project TimeGenerated, IPAddress, Location, ResultType, AuthenticationRequirement
+| order by TimeGenerated asc
 
 ### 🖼️ Screenshot
-<Insert screenshot>
+<img width="2120" height="1134" alt="image" src="https://github.com/user-attachments/assets/59dec488-082c-4a09-9392-4e0ce5e706ee" />
 
 ### 🛠️ Detection Recommendation
 
@@ -266,10 +269,13 @@ SigninLogs
 <Explain impact, risk, and relevance>
 
 ### 🔧 KQL Query Used
-<Add KQL here>
+SigninLogs
+| where UserPrincipalName == "m.smith@lognpacific.org"
+| project TimeGenerated, IPAddress, Location, ResultType, AuthenticationRequirement
+| order by TimeGenerated asc
 
 ### 🖼️ Screenshot
-<Insert screenshot>
+<img width="1884" height="902" alt="image" src="https://github.com/user-attachments/assets/aa72d50f-6cd4-4149-8b81-d0af4e1b6fd9" />
 
 ### 🛠️ Detection Recommendation
 
@@ -303,10 +309,14 @@ SigninLogs
 <Explain impact, risk, and relevance>
 
 ### 🔧 KQL Query Used
-<Add KQL here>
+SigninLogs
+| where UserPrincipalName == "m.smith@lognpacific.org"
+| project TimeGenerated, IPAddress, Location, ResultType, AuthenticationRequirement
+| order by TimeGenerated asc
 
 ### 🖼️ Screenshot
-<Insert screenshot>
+<img width="1898" height="742" alt="image" src="https://github.com/user-attachments/assets/b8936703-697d-4a7e-8201-4113989b4388" />
+
 
 ### 🛠️ Detection Recommendation
 
