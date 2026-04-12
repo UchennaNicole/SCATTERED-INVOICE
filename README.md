@@ -350,10 +350,14 @@ SigninLogs
 <Explain impact, risk, and relevance>
 
 ### 🔧 KQL Query Used
-<Add KQL here>
+SigninLogs
+| where IPAddress == "205.147.16.190"
+| where ResultType == "0"
+| project TimeGenerated, AppDisplayName, AppId
+| order by TimeGenerated asc
 
 ### 🖼️ Screenshot
-<Insert screenshot>
+<img width="1400" height="694" alt="image" src="https://github.com/user-attachments/assets/e453845e-acce-4d81-882c-12b1b44a7b49" />
 
 ### 🛠️ Detection Recommendation
 
@@ -387,10 +391,15 @@ SigninLogs
 <Explain impact, risk, and relevance>
 
 ### 🔧 KQL Query Used
-<Add KQL here>
+SigninLogs
+| where UserPrincipalName == "m.smith@lognpacific.org"
+| where IPAddress == "205.147.16.190"
+| project TimeGenerated, UserAgent, DeviceDetail, ClientAppUsed
+| take 5
 
 ### 🖼️ Screenshot
-<Insert screenshot>
+<img width="1540" height="762" alt="image" src="https://github.com/user-attachments/assets/b5e57976-2e13-4ae0-90e1-f2dc1639dc43" />
+
 
 ### 🛠️ Detection Recommendation
 
@@ -424,10 +433,14 @@ SigninLogs
 <Explain impact, risk, and relevance>
 
 ### 🔧 KQL Query Used
-<Add KQL here>
+SigninLogs
+| where UserPrincipalName == "m.smith@lognpacific.org"
+| where IPAddress == "205.147.16.190"
+| project TimeGenerated, UserAgent, DeviceDetail, ClientAppUsed
+| take 5
 
 ### 🖼️ Screenshot
-<Insert screenshot>
+<img width="1540" height="762" alt="image" src="https://github.com/user-attachments/assets/bdb3e260-242a-4143-a02e-6df1d9fd92ec" />
 
 ### 🛠️ Detection Recommendation
 
@@ -461,10 +474,15 @@ SigninLogs
 <Explain impact, risk, and relevance>
 
 ### 🔧 KQL Query Used
-<Add KQL here>
+CloudAppEvents
+| where TimeGenerated between (datetime(2026-02-25T21:00:00Z) .. datetime(2026-02-26T00:00:00Z))
+| where IPAddress == "205.147.16.190"
+| project TimeGenerated, ActionType, AccountDisplayName, ObjectName, ObjectType
+| order by TimeGenerated asc
+| take 10
 
 ### 🖼️ Screenshot
-<Insert screenshot>
+<img width="1808" height="632" alt="image" src="https://github.com/user-attachments/assets/f94636e9-afcf-4f13-8573-9cf019cc11ef" />
 
 ### 🛠️ Detection Recommendation
 
@@ -498,10 +516,15 @@ SigninLogs
 <Explain impact, risk, and relevance>
 
 ### 🔧 KQL Query Used
-<Add KQL here>
+CloudAppEvents
+| where TimeGenerated between (datetime(2026-02-25T21:00:00Z) .. datetime(2026-02-26T00:00:00Z))
+| where IPAddress == "205.147.16.190"
+| project TimeGenerated, ActionType, AccountDisplayName, ObjectName, ObjectType
+| order by TimeGenerated asc
+| take 10
 
 ### 🖼️ Screenshot
-<Insert screenshot>
+<img width="1872" height="636" alt="image" src="https://github.com/user-attachments/assets/3ffbba5b-7502-45c2-9c30-15807aa3f9f3" />
 
 ### 🛠️ Detection Recommendation
 
@@ -535,10 +558,15 @@ SigninLogs
 <Explain impact, risk, and relevance>
 
 ### 🔧 KQL Query Used
-<Add KQL here>
+CloudAppEvents
+| where TimeGenerated between (datetime(2026-02-25T21:00:00Z) .. datetime(2026-02-26T00:00:00Z))
+| where IPAddress == "205.147.16.190"
+| project TimeGenerated, ActionType, AccountDisplayName, ObjectName, ObjectType
+| order by TimeGenerated asc
+| take 10
 
 ### 🖼️ Screenshot
-<Insert screenshot>
+<img width="1192" height="342" alt="image" src="https://github.com/user-attachments/assets/fd1f1310-dbd9-4fbd-ad0e-4c00b65e8b7d" />
 
 ### 🛠️ Detection Recommendation
 
@@ -757,10 +785,15 @@ SigninLogs
 <Explain impact, risk, and relevance>
 
 ### 🔧 KQL Query Used
-<Add KQL here>
+EmailEvents
+| where TimeGenerated between (datetime(2026-02-25T21:00:00Z) .. datetime(2026-02-26T00:00:00Z))
+| where SenderFromAddress == "m.smith@lognpacific.org"
+| project TimeGenerated, SenderFromAddress, RecipientEmailAddress, 
+          Subject, SenderIPv4, DeliveryAction, EmailDirection
+| order by TimeGenerated asc
 
 ### 🖼️ Screenshot
-<Insert screenshot>
+<img width="1910" height="688" alt="image" src="https://github.com/user-attachments/assets/490011b8-89a4-4073-b072-df5d946a51fc" />
 
 ### 🛠️ Detection Recommendation
 
@@ -794,10 +827,16 @@ SigninLogs
 <Explain impact, risk, and relevance>
 
 ### 🔧 KQL Query Used
-<Add KQL here>
+EmailEvents
+| where TimeGenerated between (datetime(2026-02-25T21:00:00Z) .. datetime(2026-02-26T00:00:00Z))
+| where SenderFromAddress == "m.smith@lognpacific.org"
+| project TimeGenerated, SenderFromAddress, RecipientEmailAddress, 
+          Subject, SenderIPv4, DeliveryAction, EmailDirection
+| order by TimeGenerated asc
 
 ### 🖼️ Screenshot
-<Insert screenshot>
+<img width="1934" height="818" alt="image" src="https://github.com/user-attachments/assets/4271ab49-abc2-4640-9a03-f2264272ff41" />
+
 
 ### 🛠️ Detection Recommendation
 
