@@ -87,7 +87,7 @@ Answer what happened, why it matters, and what was discovered in 3–4 sentences
 
 | Flag | Technique Category | MITRE ID | Priority |
 |-----:|-------------------|----------|----------|
-| 1 | MMITRE ATT&CK: T1621 – Multi-Factor Authentication Request Generation (MFA Fatigue / Push Bombing)| T1078 -Valid Accounts & T1114.003 – Email Forwarding Rule & T1564.008 – Hide Artifacts: Email Hiding Rules & T1657 – Financial Theft | <Placeholder> |
+| 1 | MMITRE ATT&CK: T1621 – Multi-Factor Authentication Request Generation (MFA Fatigue / Push Bombing)| T1078 -Valid Accounts & T1114.003 – Email Forwarding Rule & T1564.008 – Hide Artifacts: Email Hiding Rules & T1657 – Financial Theft | 🔴 MITRE Priority: P1 (Critical)|
 | 2 | <Placeholder> | <Placeholder> | <Placeholder> |
 | 3 | <Placeholder> | <Placeholder> | <Placeholder> |
 | 4 | <Placeholder> | <Placeholder> | <Placeholder> |
