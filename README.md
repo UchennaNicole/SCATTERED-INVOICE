@@ -88,7 +88,7 @@ Answer what happened, why it matters, and what was discovered in 3–4 sentences
 | Flag | Technique Category | MITRE ID | Priority |
 |-----:|-------------------|----------|----------|
 | 1 | MMITRE ATT&CK: T1621 – Multi-Factor Authentication Request Generation (MFA Fatigue / Push Bombing)| T1078 -Valid Accounts & T1114.003 – Email Forwarding Rule & T1564.008 – Hide Artifacts: Email Hiding Rules & T1657 – Financial Theft | 🔴 MITRE Priority: P1 (Critical)|
-| 2 | <Placeholder> | <Placeholder> | <Placeholder> |
+| 2 | MMITRE ATT&CK: T1078 – Valid Accounts | T1621 – Multi-Factor Authentication Request Generation | 🟠 MITRE Priority: P2 (High) |
 | 3 | <Placeholder> | <Placeholder> | <Placeholder> |
 | 4 | <Placeholder> | <Placeholder> | <Placeholder> |
 | 5 | <Placeholder> | <Placeholder> | <Placeholder> |
@@ -168,23 +168,23 @@ Start with the compromised identity in `SigninLogs`, then pivot to the source IP
 <summary id="-flag-2">🚩 <strong>Flag 2: <Technique Name></strong></summary>
 
 ### 🎯 Objective
-<What the attacker was trying to accomplish>
+The attacker aimed to gain unauthorized access to Mark Smith’s account by bypassing MFA controls, enabling account takeover to support downstream Business Email Compromise and financial fraud.
 
 ### 📌 Finding
-<High-level description of the activity>
+Successful sign-ins to Mark Smith’s account originated from an anomalous IP address (205.147.16.190) in the Netherlands during the evening, deviating from his normal usage patterns. This indicates MFA fatigue was successfully exploited, resulting in unauthorized access.
 
 ### 🔍 Evidence
 
 | Field | Value |
 |------|-------|
-| Host | <Placeholder> |
-| Timestamp | <Placeholder> |
-| Process | <Placeholder> |
-| Parent Process | <Placeholder> |
-| Command Line | <Placeholder> |
+| Host | Azure AD / Microsoft 365 (cloud identity) |
+| Timestamp | 2026-02-25 ~22:12–22:25 UTC |
+| Process | Azure AD Sign-in (interactive authentication) |
+| Parent Process | External authentication request (MFA push) |
+| Command Line | N/A — cloud-based authentication event |
 
 ### 💡 Why it matters
-<Explain impact, risk, and relevance>
+This confirms the initial access vector of the attack. The use of a foreign IP and successful MFA authentication shows the attacker bypassed identity protections using social engineering (MFA fatigue). This allowed them to operate as a legitimate user, making detection harder and enabling high-impact actions like inbox rule creation and financial fraud.
 
 ### 🔧 KQL Query Used
 SigninLogs
@@ -196,9 +196,10 @@ SigninLogs
 <img width="2120" height="1134" alt="image" src="https://github.com/user-attachments/assets/6156c910-9427-4c6b-a155-d98af768b636" />
 
 ### 🛠️ Detection Recommendation
+Implement detections for anomalous sign-ins based on geolocation, impossible travel, and unfamiliar IP addresses. Alert on multiple MFA requests followed by a success from a new location or device. Enforce number matching or phishing-resistant MFA methods to mitigate MFA fatigue attacks.
 
 **Hunting Tip:**  
-<Actionable guidance for defenders>
+Query `SigninLogs` for successful authentications (`ResultType == 0`) and compare IP addresses, locations, and authentication methods against a known baseline. Look for sudden geographic shifts, repeated MFA attempts, and new IPs associated with the same user account.
 
 </details>
 
