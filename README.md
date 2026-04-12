@@ -87,7 +87,7 @@ Answer what happened, why it matters, and what was discovered in 3–4 sentences
 
 | Flag | Technique Category | MITRE ID | Priority |
 |-----:|-------------------|----------|----------|
-| 1 | <Placeholder> | <Placeholder> | <Placeholder> |
+| 1 | MMITRE ATT&CK: T1621 – Multi-Factor Authentication Request Generation (MFA Fatigue / Push Bombing)| T1078 -Valid Accounts & T1114.003 – Email Forwarding Rule & T1564.008 – Hide Artifacts: Email Hiding Rules & T1657 – Financial Theft | <Placeholder> |
 | 2 | <Placeholder> | <Placeholder> | <Placeholder> |
 | 3 | <Placeholder> | <Placeholder> | <Placeholder> |
 | 4 | <Placeholder> | <Placeholder> | <Placeholder> |
@@ -128,23 +128,23 @@ _All flags below are collapsible for readability._
 <summary id="-flag-1">🚩 <strong>Flag 1: <Technique Name></strong></summary>
 
 ### 🎯 Objective
-<What the attacker was trying to accomplish>
+The attacker was trying to take over Mark Smith’s Microsoft 365 account, impersonate a trusted employee, and redirect a legitimate vendor payment to attacker-controlled banking details.
 
 ### 📌 Finding
-<High-level description of the activity>
+This was a Business Email Compromise driven by MFA fatigue. The attacker spammed Mark Smith with MFA prompts until one was approved, gained access to his account, created unauthorized inbox rules, and used the compromised mailbox to support a fraudulent wire transfer request.
 
 ### 🔍 Evidence
 
 | Field | Value |
 |------|-------|
-| Host | <Placeholder> |
-| Timestamp | <Placeholder> |
-| Process | <Placeholder> |
-| Parent Process | <Placeholder> |
-| Command Line | <Placeholder> |
+| Host | N/A — cloud identity / Microsoft 365 account |
+| Timestamp | 2026-02-25 evening UTC |
+| Process | MFA approval leading to cloud sign-in |
+| Parent Process | Account takeover / suspicious sign-in activity |
+| Command Line | N/A — cloud-based activity, not endpoint process execution |
 
 ### 💡 Why it matters
-<Explain impact, risk, and relevance>
+This matters because the attacker abused a legitimate user account, which makes the activity blend in with normal business operations. Once inside, they were able to manipulate trust, evade quick detection with inbox rules, and trigger real financial impact. Even though the £24,500 transfer was frozen, the incident confirms control failure around identity protection, user awareness, and mailbox monitoring.
 
 ### 🔧 KQL Query Used
 SigninLogs
@@ -155,9 +155,10 @@ SigninLogs
 <img width="972" height="690" alt="image" src="https://github.com/user-attachments/assets/81c52283-b4c0-424b-883f-b6d296ba3244" />
 
 ### 🛠️ Detection Recommendation
+Detect repeated MFA denials followed by a single approval from unusual IP addresses, devices, or geolocations. Correlate successful sign-ins with new inbox rule creation, suspicious mailbox access, and outbound messages involving payment changes, banking updates, or vendor redirection. Prioritize alerts where finance users are involved.
 
 **Hunting Tip:**  
-<Actionable guidance for defenders>
+Start with the compromised identity in `SigninLogs`, then pivot to the source IP, MFA result, device details, and app used. From there, check `CloudAppEvents` for inbox rule creation and mailbox access, then use `EmailEvents` to trace who received the fraudulent payment update.
 
 </details>
 
