@@ -727,10 +727,17 @@ CloudAppEvents
 <Explain impact, risk, and relevance>
 
 ### 🔧 KQL Query Used
-<Add KQL here>
+CloudAppEvents
+| where TimeGenerated between (datetime(2026-02-25T21:00:00Z) .. datetime(2026-02-26T00:00:00Z))
+| where IPAddress == "205.147.16.190"
+| where ActionType == "New-InboxRule"
+| mv-expand Parameters = todynamic(RawEventData).Parameters
+| where Parameters.Name == "Name"
+| project TimeGenerated, RuleName = tostring(Parameters.Value)
+| order by TimeGenerated asc
 
 ### 🖼️ Screenshot
-<Insert screenshot>
+<img width="1546" height="866" alt="image" src="https://github.com/user-attachments/assets/727512bb-87e4-4ac3-803c-cec48e627647" />
 
 ### 🛠️ Detection Recommendation
 
