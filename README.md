@@ -94,7 +94,7 @@ Answer what happened, why it matters, and what was discovered in 3–4 sentences
 | 5 | MITRE ATT&CK: T1621 – Multi-Factor Authentication Request Generation | T1078 – Valid Accounts | 🔴 MITRE Priority: P1 (Critical) |
 | 6 | MITRE ATT&CK: T1114 – Email Collection | T1114.002 – Remote Email Collection | 🔴 MITRE Priority: P1 (Critical) |
 | 7 | MITRE ATT&CK: T1078.004 – Valid Accounts: Cloud Accounts | T1204 – User Execution | 🟠 MITRE Priority: P2 (High)|
-| 8 | <Placeholder> | <Placeholder> | <Placeholder> |
+| 8 | MITRE ATT&CK: T1078.004 – Valid Accounts: Cloud Accounts | T1036 – Masquerading | 🟠 MITRE Priority: P2 (High) |
 | 9 | <Placeholder> | <Placeholder> | <Placeholder> |
 | 10 | <Placeholder> | <Placeholder> | <Placeholder> |
 | 11 | <Placeholder> | <Placeholder> | <Placeholder> |
@@ -419,23 +419,23 @@ Query `SigninLogs` and compare `DeviceDetail.operatingSystem`, `isManaged`, and 
 <summary id="-flag-8">🚩 <strong>Flag 8: <Technique Name></strong></summary>
 
 ### 🎯 Objective
-<What the attacker was trying to accomplish>
+The attacker aimed to access the compromised account using a non-standard browser to blend in as legitimate web traffic while maintaining remote control of the mailbox.
 
 ### 📌 Finding
-<High-level description of the activity>
+The attacker authenticated using **Firefox 147.0 on Linux**, which differs from the user’s normal browser and corporate device profile. This introduces a third anomaly layer (browser + OS + location), strengthening evidence of account compromise.
 
 ### 🔍 Evidence
 
 | Field | Value |
 |------|-------|
-| Host | <Placeholder> |
-| Timestamp | <Placeholder> |
-| Process | <Placeholder> |
-| Parent Process | <Placeholder> |
-| Command Line | <Placeholder> |
+| Host | Azure AD / Microsoft 365 (cloud identity) |
+| Timestamp | 2026-02-25T22:24:32.869Z |
+| Process | Browser-based authentication (Firefox 147.0) |
+| Parent Process | Azure AD successful sign-in |
+| Command Line | N/A — cloud-based authentication event |
 
 ### 💡 Why it matters
-<Explain impact, risk, and relevance>
+Browser fingerprinting is a critical detection signal. A user suddenly switching to a different browser, operating system, and geographic location strongly indicates attacker activity. Layering these anomalies increases confidence in identifying compromised accounts and reduces false positives.
 
 ### 🔧 KQL Query Used
 SigninLogs
@@ -448,9 +448,10 @@ SigninLogs
 <img width="1540" height="762" alt="image" src="https://github.com/user-attachments/assets/bdb3e260-242a-4143-a02e-6df1d9fd92ec" />
 
 ### 🛠️ Detection Recommendation
+Baseline user browser and device patterns, and alert on deviations such as new browser types or versions. Combine browser anomalies with geolocation and device compliance signals to detect high-confidence compromises.
 
 **Hunting Tip:**  
-<Actionable guidance for defenders>
+Query `SigninLogs` and analyze `UserAgent` and `DeviceDetail.browser`. Compare against historical patterns for the user. Look for first-time browser usage combined with new OS and foreign IPs—this multi-layer anomaly is a strong compromise indicator.
 
 </details>
 
