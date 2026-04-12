@@ -188,10 +188,13 @@ SigninLogs
 <Explain impact, risk, and relevance>
 
 ### 🔧 KQL Query Used
-<Add KQL here>
+SigninLogs
+| where UserPrincipalName == "m.smith@lognpacific.org"
+| project TimeGenerated, IPAddress, Location, ResultType, AuthenticationRequirement
+| order by TimeGenerated asc
 
 ### 🖼️ Screenshot
-<Insert screenshot>
+<img width="2120" height="1134" alt="image" src="https://github.com/user-attachments/assets/6156c910-9427-4c6b-a155-d98af768b636" />
 
 ### 🛠️ Detection Recommendation
 
