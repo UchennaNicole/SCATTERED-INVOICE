@@ -684,10 +684,16 @@ CloudAppEvents
 <Explain impact, risk, and relevance>
 
 ### 🔧 KQL Query Used
-<Add KQL here>
+CloudAppEvents
+| where TimeGenerated between (datetime(2026-02-25T21:00:00Z) .. datetime(2026-02-26T00:00:00Z))
+| where IPAddress == "205.147.16.190"
+| where ActionType == "New-InboxRule"
+| mv-expand Parameters = todynamic(RawEventData).Parameters
+| where Parameters.Name == "ForwardTo"
+| project TimeGenerated, ForwardTo = tostring(Parameters.Value), RawEventData
 
 ### 🖼️ Screenshot
-<Insert screenshot>
+<img width="2260" height="896" alt="image" src="https://github.com/user-attachments/assets/8a186d5e-7c4f-439f-8135-543ac70da242" />
 
 ### 🛠️ Detection Recommendation
 
