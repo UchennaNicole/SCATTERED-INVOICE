@@ -92,8 +92,9 @@ Answer what happened, why it matters, and what was discovered in 3–4 sentences
 | 3 | MITRE ATT&CK: T1078 – Valid Accounts | T1078.004 – Valid Accounts: Cloud Accounts | 🟠 MITRE Priority: P2 (High) |
 | 4 | MITRE ATT&CK: T1621 – Multi-Factor Authentication Request Generation | T1110 – Brute Force (behavioral overlap) | 🟡 MITRE Priority: P3 (Medium) |
 | 5 | MITRE ATT&CK: T1621 – Multi-Factor Authentication Request Generation | T1078 – Valid Accounts | 🔴 MITRE Priority: P1 (Critical) |
-| 6 | T1114 – Email Collection | T1114.002 – Remote Email Collection | 🔴 MITRE Priority: P1 (Critical) |
-| 7 | <Placeholder> | <Placeholder> | <Placeholder> |
+| 6 | MITRE ATT&CK: T1114 – Email Collection | T1114.002 – Remote Email Collection | 🔴 MITRE Priority: P1 (Critical) |
+| 7 | MITRE ATT&CK: T1078.004 – Valid Accounts: Cloud Accounts | T1204 – User Execution | 🟠 MITRE Priority: P2 (High)
+|
 | 8 | <Placeholder> | <Placeholder> | <Placeholder> |
 | 9 | <Placeholder> | <Placeholder> | <Placeholder> |
 | 10 | <Placeholder> | <Placeholder> | <Placeholder> |
@@ -376,23 +377,23 @@ Query `SigninLogs` and filter for `ResultType == 0`, then review `AppDisplayName
 <summary id="-flag-7">🚩 <strong>Flag 7: <Technique Name></strong></summary>
 
 ### 🎯 Objective
-<What the attacker was trying to accomplish>
+The attacker aimed to access the compromised account from an unmanaged, non-corporate device to avoid detection and maintain stealthy control over the mailbox.
 
 ### 📌 Finding
-<High-level description of the activity>
+Authentication occurred from a **Linux-based system using Firefox**, which differs from the user’s normal **managed Windows corporate device**. The session was marked as **unmanaged and non-compliant**, confirming attacker-controlled infrastructure.
 
 ### 🔍 Evidence
 
 | Field | Value |
 |------|-------|
-| Host | <Placeholder> |
-| Timestamp | <Placeholder> |
-| Process | <Placeholder> |
-| Parent Process | <Placeholder> |
-| Command Line | <Placeholder> |
+| Host | Azure AD / Microsoft 365 (cloud identity) |
+| Timestamp | 2026-02-25T22:24:32.869Z |
+| Process | Browser-based authentication (Firefox 147.0) |
+| Parent Process | Azure AD successful sign-in |
+| Command Line | N/A — cloud-based authentication event |
 
 ### 💡 Why it matters
-<Explain impact, risk, and relevance>
+Device profile anomalies are a strong indicator of compromise. A user who typically logs in from a managed Windows endpoint suddenly authenticating from an unmanaged Linux system suggests unauthorized access. This helps confirm attacker presence and distinguishes legitimate from malicious sessions at scale.
 
 ### 🔧 KQL Query Used
 SigninLogs
@@ -406,9 +407,10 @@ SigninLogs
 
 
 ### 🛠️ Detection Recommendation
+Implement detections for sign-ins from **unmanaged or non-compliant devices**, especially when paired with new operating systems or browsers. Alert on deviations from known device baselines for users, particularly high-risk roles like finance.
 
 **Hunting Tip:**  
-<Actionable guidance for defenders>
+Query `SigninLogs` and compare `DeviceDetail.operatingSystem`, `isManaged`, and `isCompliant` fields against known baselines. Flag sessions where a user shifts from managed Windows devices to unmanaged systems like Linux or unknown browsers.
 
 </details>
 
