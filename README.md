@@ -92,7 +92,7 @@ Answer what happened, why it matters, and what was discovered in 3–4 sentences
 | 3 | MITRE ATT&CK: T1078 – Valid Accounts | T1078.004 – Valid Accounts: Cloud Accounts | 🟠 MITRE Priority: P2 (High) |
 | 4 | MITRE ATT&CK: T1621 – Multi-Factor Authentication Request Generation | T1110 – Brute Force (behavioral overlap) | 🟡 MITRE Priority: P3 (Medium) |
 | 5 | MITRE ATT&CK: T1621 – Multi-Factor Authentication Request Generation | T1078 – Valid Accounts | 🔴 MITRE Priority: P1 (Critical) |
-| 6 | <Placeholder> | <Placeholder> | <Placeholder> |
+| 6 | T1114 – Email Collection | T1114.002 – Remote Email Collection | 🔴 MITRE Priority: P1 (Critical) |
 | 7 | <Placeholder> | <Placeholder> | <Placeholder> |
 | 8 | <Placeholder> | <Placeholder> | <Placeholder> |
 | 9 | <Placeholder> | <Placeholder> | <Placeholder> |
@@ -334,23 +334,23 @@ Query `SigninLogs` and filter for failed authentication codes, then sequence eve
 <summary id="-flag-6">🚩 <strong>Flag 6: <Technique Name></strong></summary>
 
 ### 🎯 Objective
-<What the attacker was trying to accomplish>
+The attacker aimed to access the victim’s mailbox via a web-based application to monitor, manipulate, and send emails for Business Email Compromise activities.
 
 ### 📌 Finding
-<High-level description of the activity>
+After successfully bypassing MFA, the attacker authenticated to **One Outlook Web**, indicating remote access to the victim’s email via a browser. This aligns with attacker behavior leveraging cloud apps without needing endpoint access.
 
 ### 🔍 Evidence
 
 | Field | Value |
 |------|-------|
-| Host | <Placeholder> |
-| Timestamp | <Placeholder> |
-| Process | <Placeholder> |
-| Parent Process | <Placeholder> |
-| Command Line | <Placeholder> |
+| Host | Microsoft 365 / Azure AD (cloud application) |
+| Timestamp | 2026-02-25 ~21:59–22:01 UTC |
+| Process | One Outlook Web (web-based email access) |
+| Parent Process | Azure AD successful authentication (ResultType 0) |
+| Command Line | N/A — cloud-based application access |
 
 ### 💡 Why it matters
-<Explain impact, risk, and relevance>
+Access to Outlook Web gives the attacker full visibility and control over the user’s mailbox. This enables reading conversations, creating inbox rules, and sending fraudulent emails that appear legitimate. It is a critical step in executing Business Email Compromise attacks and financial fraud.
 
 ### 🔧 KQL Query Used
 SigninLogs
@@ -363,9 +363,10 @@ SigninLogs
 <img width="1400" height="694" alt="image" src="https://github.com/user-attachments/assets/e453845e-acce-4d81-882c-12b1b44a7b49" />
 
 ### 🛠️ Detection Recommendation
+Monitor for successful logins to cloud applications like Outlook Web from unfamiliar IPs, locations, or devices. Correlate access to email services with prior suspicious sign-in activity. Alert on first-time application access or abnormal usage patterns for sensitive users.
 
 **Hunting Tip:**  
-<Actionable guidance for defenders>
+Query `SigninLogs` and filter for `ResultType == 0`, then review `AppDisplayName`. Pivot on applications like **One Outlook Web** and correlate with IP address and location to identify suspicious access patterns following authentication events.
 
 </details>
 
