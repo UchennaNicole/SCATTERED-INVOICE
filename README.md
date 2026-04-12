@@ -1066,10 +1066,16 @@ CloudAppEvents
 <Explain impact, risk, and relevance>
 
 ### 🔧 KQL Query Used
-<Add KQL here>
+CloudAppEvents
+| where TimeGenerated between (datetime(2026-02-25T21:00:00Z) .. datetime(2026-02-26T00:00:00Z))
+| where IPAddress == "205.147.16.190"
+| where ActionType == "New-InboxRule"
+| extend AADSessionId = tostring(todynamic(RawEventData).AppAccessContext.AADSessionId)
+| project TimeGenerated, AADSessionId
+| distinct AADSessionId
 
 ### 🖼️ Screenshot
-<Insert screenshot>
+<img width="1576" height="748" alt="image" src="https://github.com/user-attachments/assets/ac3a3a7d-77cf-445d-9d52-8b41755fe58a" />
 
 ### 🛠️ Detection Recommendation
 
