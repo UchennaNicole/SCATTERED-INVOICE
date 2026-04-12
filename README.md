@@ -186,10 +186,12 @@ _All flags below are collapsible for readability._
 <Explain impact, risk, and relevance>
 
 ### 🔧 KQL Query Used
-<Add KQL here>
+SigninLogs
+| where UserDisplayName has "Mark"
+| distinct UserPrincipalName, UserDisplayName
 
 ### 🖼️ Screenshot
-<Insert screenshot>
+<img width="972" height="690" alt="image" src="https://github.com/user-attachments/assets/81c52283-b4c0-424b-883f-b6d296ba3244" />
 
 ### 🛠️ Detection Recommendation
 
