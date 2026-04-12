@@ -90,7 +90,7 @@ Answer what happened, why it matters, and what was discovered in 3–4 sentences
 | 1 | MITRE ATT&CK: T1621 – Multi-Factor Authentication Request Generation (MFA Fatigue / Push Bombing)| T1078 -Valid Accounts & T1114.003 – Email Forwarding Rule & T1564.008 – Hide Artifacts: Email Hiding Rules & T1657 – Financial Theft | 🔴 MITRE Priority: P1 (Critical)|
 | 2 | MITRE ATT&CK: T1078 – Valid Accounts | T1621 – Multi-Factor Authentication Request Generation | 🟠 MITRE Priority: P2 (High) |
 | 3 | MITRE ATT&CK: T1078 – Valid Accounts | T1078.004 – Valid Accounts: Cloud Accounts | 🟠 MITRE Priority: P2 (High) |
-| 4 | <Placeholder> | <Placeholder> | <Placeholder> |
+| 4 | MITRE ATT&CK: T1621 – Multi-Factor Authentication Request Generation | T1110 – Brute Force (behavioral overlap) | 🟡 MITRE Priority: P3 (Medium) |
 | 5 | <Placeholder> | <Placeholder> | <Placeholder> |
 | 6 | <Placeholder> | <Placeholder> | <Placeholder> |
 | 7 | <Placeholder> | <Placeholder> | <Placeholder> |
@@ -251,23 +251,23 @@ Use `SigninLogs` to compare historical login locations against current activity.
 <summary id="-flag-4">🚩 <strong>Flag 4: <Technique Name></strong></summary>
 
 ### 🎯 Objective
-<What the attacker was trying to accomplish>
+The attacker aimed to trigger repeated MFA prompts to fatigue the user into approving a request, enabling unauthorized access to the account.
 
 ### 📌 Finding
-<High-level description of the activity>
+Multiple authentication attempts from a foreign IP (205.147.16.190 – NL) resulted in error code **50074**, indicating MFA was required but not completed. This pattern is consistent with MFA fatigue/push bombing attempts prior to successful compromise.
 
 ### 🔍 Evidence
 
 | Field | Value |
 |------|-------|
-| Host | <Placeholder> |
-| Timestamp | <Placeholder> |
-| Process | <Placeholder> |
-| Parent Process | <Placeholder> |
-| Command Line | <Placeholder> |
+| Host | Azure AD / Microsoft 365 (cloud identity) |
+| Timestamp | 2026-02-25T22:24:32.869Z |
+| Process | Azure AD Sign-in (failed authentication attempt) |
+| Parent Process | External authentication request (MFA push attempt) |
+| Command Line | N/A — cloud-based authentication event |
 
 ### 💡 Why it matters
-<Explain impact, risk, and relevance>
+Error code **50074** is a key indicator of MFA enforcement without completion, often seen during brute-force or MFA fatigue attacks. Repeated occurrences signal an attacker actively attempting to gain access. When followed by a successful login, it confirms the user was eventually coerced into approving MFA, leading to full account compromise.
 
 ### 🔧 KQL Query Used
 SigninLogs
@@ -279,9 +279,10 @@ SigninLogs
 <img width="1884" height="902" alt="image" src="https://github.com/user-attachments/assets/aa72d50f-6cd4-4149-8b81-d0af4e1b6fd9" />
 
 ### 🛠️ Detection Recommendation
+Alert on repeated occurrences of **ResultType 50074** for a single user, especially from unfamiliar IP addresses or geolocations. Correlate with subsequent successful logins (**ResultType 0**) to identify potential MFA fatigue success. Implement MFA number matching or phishing-resistant MFA to reduce approval abuse.
 
 **Hunting Tip:**  
-<Actionable guidance for defenders>
+Query `SigninLogs` for `ResultType == 50074` and group by `UserPrincipalName` and `IPAddress`. Look for high-frequency attempts followed by a successful authentication from the same IP—this pattern strongly indicates MFA fatigue leading to compromise.
 
 </details>
 
