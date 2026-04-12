@@ -95,7 +95,7 @@ Answer what happened, why it matters, and what was discovered in 3–4 sentences
 | 6 | MITRE ATT&CK: T1114 – Email Collection | T1114.002 – Remote Email Collection | 🔴 MITRE Priority: P1 (Critical) |
 | 7 | MITRE ATT&CK: T1078.004 – Valid Accounts: Cloud Accounts | T1204 – User Execution | 🟠 MITRE Priority: P2 (High)|
 | 8 | MITRE ATT&CK: T1078.004 – Valid Accounts: Cloud Accounts | T1036 – Masquerading | 🟠 MITRE Priority: P2 (High) |
-| 9 | <Placeholder> | <Placeholder> | <Placeholder> |
+| 9 | MITRE ATT&CK: T1114 – Email Collection | T1114.002 – Remote Email Collection | 🔴 MITRE Priority: P1 (Critical) |
 | 10 | <Placeholder> | <Placeholder> | <Placeholder> |
 | 11 | <Placeholder> | <Placeholder> | <Placeholder> |
 | 12 | <Placeholder> | <Placeholder> | <Placeholder> |
@@ -461,23 +461,23 @@ Query `SigninLogs` and analyze `UserAgent` and `DeviceDetail.browser`. Compare a
 <summary id="-flag-9">🚩 <strong>Flag 9: <Technique Name></strong></summary>
 
 ### 🎯 Objective
-<What the attacker was trying to accomplish>
+The attacker aimed to review the victim’s mailbox to gather context, identify financial conversations, and prepare for a targeted Business Email Compromise.
 
 ### 📌 Finding
-<High-level description of the activity>
+The first post-authentication activity was **MailItemsAccessed**, indicating the attacker immediately began reading emails. This shows reconnaissance within the mailbox rather than immediate persistence or exfiltration.
 
 ### 🔍 Evidence
 
 | Field | Value |
 |------|-------|
-| Host | <Placeholder> |
-| Timestamp | <Placeholder> |
-| Process | <Placeholder> |
-| Parent Process | <Placeholder> |
-| Command Line | <Placeholder> |
+| Host | Microsoft 365 / Exchange Online |
+| Timestamp | 2026-02-25 ~21:56–21:57 UTC |
+| Process | MailItemsAccessed (mailbox access activity) |
+| Parent Process | Successful Azure AD sign-in (compromised account) |
+| Command Line | N/A — cloud-based mailbox activity |
 
 ### 💡 Why it matters
-<Explain impact, risk, and relevance>
+Accessing mail items first indicates intent to understand business processes, identify vendors, and locate financial threads. This is a hallmark of BEC attacks, where attackers study communication patterns before impersonating users or initiating fraud.
 
 ### 🔧 KQL Query Used
 CloudAppEvents
@@ -491,9 +491,10 @@ CloudAppEvents
 <img width="1808" height="632" alt="image" src="https://github.com/user-attachments/assets/f94636e9-afcf-4f13-8573-9cf019cc11ef" />
 
 ### 🛠️ Detection Recommendation
+Monitor for **MailItemsAccessed** events from unusual IPs, locations, or devices. Correlate mailbox access immediately following suspicious logins. Flag high-volume or first-time mailbox access from foreign geolocations.
 
 **Hunting Tip:**  
-<Actionable guidance for defenders>
+Query `CloudAppEvents` for `ActionType == "MailItemsAccessed"` and correlate with suspicious `SigninLogs`. Focus on first actions after login—early mailbox access is a strong indicator of reconnaissance in BEC scenarios.
 
 </details>
 
