@@ -91,7 +91,7 @@ Answer what happened, why it matters, and what was discovered in 3–4 sentences
 | 2 | MITRE ATT&CK: T1078 – Valid Accounts | T1621 – Multi-Factor Authentication Request Generation | 🟠 MITRE Priority: P2 (High) |
 | 3 | MITRE ATT&CK: T1078 – Valid Accounts | T1078.004 – Valid Accounts: Cloud Accounts | 🟠 MITRE Priority: P2 (High) |
 | 4 | MITRE ATT&CK: T1621 – Multi-Factor Authentication Request Generation | T1110 – Brute Force (behavioral overlap) | 🟡 MITRE Priority: P3 (Medium) |
-| 5 | <Placeholder> | <Placeholder> | <Placeholder> |
+| 5 | MITRE ATT&CK: T1621 – Multi-Factor Authentication Request Generation | T1078 – Valid Accounts | 🔴 MITRE Priority: P1 (Critical) |
 | 6 | <Placeholder> | <Placeholder> | <Placeholder> |
 | 7 | <Placeholder> | <Placeholder> | <Placeholder> |
 | 8 | <Placeholder> | <Placeholder> | <Placeholder> |
@@ -292,23 +292,23 @@ Query `SigninLogs` for `ResultType == 50074` and group by `UserPrincipalName` an
 <summary id="-flag-5">🚩 <strong>Flag 5: <Technique Name></strong></summary>
 
 ### 🎯 Objective
-<What the attacker was trying to accomplish>
+The attacker aimed to overwhelm the user with repeated MFA prompts to force an approval, enabling unauthorized access to the account.
 
 ### 📌 Finding
-<High-level description of the activity>
+The attacker attempted authentication **3 times** from IP **205.147.16.190 (NL)** before achieving a successful login. These failed attempts (MFA not satisfied) followed by a success indicate a classic MFA fatigue/push bombing attack.
 
 ### 🔍 Evidence
 
 | Field | Value |
 |------|-------|
-| Host | <Placeholder> |
-| Timestamp | <Placeholder> |
-| Process | <Placeholder> |
-| Parent Process | <Placeholder> |
-| Command Line | <Placeholder> |
+| Host | Azure AD / Microsoft 365 (cloud identity) |
+| Timestamp | 2026-02-25 ~22:24–22:25 UTC |
+| Process | Azure AD Sign-in (failed → successful authentication sequence) |
+| Parent Process | External authentication request (MFA push attempts) |
+| Command Line | N/A — cloud-based authentication event |
 
 ### 💡 Why it matters
-<Explain impact, risk, and relevance>
+A sequence of failed MFA attempts followed by a success is a strong indicator of MFA fatigue. It shows the attacker persisted until the user approved a request, leading directly to account compromise. This pattern is a high-confidence signal of adversary behavior and should trigger immediate response.
 
 ### 🔧 KQL Query Used
 SigninLogs
@@ -321,9 +321,10 @@ SigninLogs
 
 
 ### 🛠️ Detection Recommendation
+Detect patterns of repeated failed MFA attempts (e.g., **ResultType 50074 / 50140**) followed by a successful login (**ResultType 0**) from the same IP or location. Alert on rapid authentication attempts from foreign geolocations targeting a single user.
 
 **Hunting Tip:**  
-<Actionable guidance for defenders>
+Query `SigninLogs` and filter for failed authentication codes, then sequence events by time. Look for multiple failures from the same IP followed closely by a success. This temporal pattern is a reliable indicator of MFA fatigue leading to compromise.
 
 </details>
 
