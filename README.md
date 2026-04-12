@@ -71,7 +71,6 @@ Answer what happened, why it matters, and what was discovered in 3–4 sentences
   - [🚩 Flag 27](#-flag-27)
   - [🚩 Flag 28](#-flag-28)
   - [🚩 Flag 29](#-flag-29)
-  - [🚩 Flag 30](#-flag-30)
 - [🚨 Detection Gaps & Recommendations](#-detection-gaps--recommendations)
 - [🧾 Final Assessment](#-final-assessment)
 - [📎 Analyst Notes](#-analyst-notes)
@@ -117,7 +116,6 @@ Answer what happened, why it matters, and what was discovered in 3–4 sentences
 | 27 | <Placeholder> | <Placeholder> | <Placeholder> |
 | 28 | <Placeholder> | <Placeholder> | <Placeholder> |
 | 29 | <Placeholder> | <Placeholder> | <Placeholder> |
-| 30 | <Placeholder> | <Placeholder> | <Placeholder> |
 ---
 
 ## 🔍 Flag Analysis
@@ -870,10 +868,15 @@ EmailEvents
 <Explain impact, risk, and relevance>
 
 ### 🔧 KQL Query Used
-<Add KQL here>
+EmailEvents
+| where TimeGenerated between (datetime(2026-02-25T21:00:00Z) .. datetime(2026-02-26T00:00:00Z))
+| where SenderFromAddress == "m.smith@lognpacific.org"
+| project TimeGenerated, SenderFromAddress, RecipientEmailAddress, 
+          Subject, SenderIPv4, DeliveryAction, EmailDirection
+| order by TimeGenerated asc
 
 ### 🖼️ Screenshot
-<Insert screenshot>
+<img width="1276" height="976" alt="image" src="https://github.com/user-attachments/assets/289defba-4f99-45d6-8fdd-158d6f7a9b83" />
 
 ### 🛠️ Detection Recommendation
 
@@ -907,10 +910,15 @@ EmailEvents
 <Explain impact, risk, and relevance>
 
 ### 🔧 KQL Query Used
-<Add KQL here>
+EmailEvents
+| where TimeGenerated between (datetime(2026-02-25T21:00:00Z) .. datetime(2026-02-26T00:00:00Z))
+| where SenderFromAddress == "m.smith@lognpacific.org"
+| project TimeGenerated, SenderFromAddress, RecipientEmailAddress, 
+          Subject, SenderIPv4, DeliveryAction, EmailDirection
+| order by TimeGenerated asc
 
 ### 🖼️ Screenshot
-<Insert screenshot>
+<img width="1140" height="856" alt="image" src="https://github.com/user-attachments/assets/90d97795-b16d-42e4-b387-ed19e9fcf945" />
 
 ### 🛠️ Detection Recommendation
 
@@ -944,10 +952,15 @@ EmailEvents
 <Explain impact, risk, and relevance>
 
 ### 🔧 KQL Query Used
-<Add KQL here>
+CloudAppEvents
+| where TimeGenerated between (datetime(2026-02-25T21:00:00Z) .. datetime(2026-02-26T00:00:00Z))
+| where IPAddress == "205.147.16.190"
+| where ActionType == "FileAccessed"
+| project TimeGenerated, ActionType, Application, ObjectName, ObjectType, AccountDisplayName
+| order by TimeGenerated asc
 
 ### 🖼️ Screenshot
-<Insert screenshot>
+<img width="1848" height="664" alt="image" src="https://github.com/user-attachments/assets/739ce2e4-ab12-4252-a8f0-31e7b272b794" />
 
 ### 🛠️ Detection Recommendation
 
@@ -981,10 +994,13 @@ EmailEvents
 <Explain impact, risk, and relevance>
 
 ### 🔧 KQL Query Used
-<Add KQL here>
+CloudAppEvents
+| where TimeGenerated between (datetime(2026-02-25T21:00:00Z) .. datetime(2026-02-26T00:00:00Z))
+| where IPAddress == "205.147.16.190"
+| distinct Application
 
 ### 🖼️ Screenshot
-<Insert screenshot>
+<img width="1528" height="756" alt="image" src="https://github.com/user-attachments/assets/6d3f3b0c-a30b-463d-9597-3747ed81c201" />
 
 ### 🛠️ Detection Recommendation
 
@@ -1055,10 +1071,15 @@ EmailEvents
 <Explain impact, risk, and relevance>
 
 ### 🔧 KQL Query Used
-<Add KQL here>
+SigninLogs
+| where IPAddress == "205.147.16.190"
+| where ResultType == "0"
+| project TimeGenerated, ConditionalAccessStatus, ConditionalAccessPolicies
+| order by TimeGenerated asc
+| take 5
 
 ### 🖼️ Screenshot
-<Insert screenshot>
+<img width="1908" height="818" alt="image" src="https://github.com/user-attachments/assets/55f264a5-6f14-4ac7-bdf5-c789ea035b4e" />
 
 ### 🛠️ Detection Recommendation
 
@@ -1089,7 +1110,11 @@ EmailEvents
 | Command Line | <Placeholder> |
 
 ### 💡 Why it matters
-<Explain impact, risk, and relevance>
+MFA fatigue / push bombing is a social engineering technique where an attacker repeatedly sends MFA push notifications to overwhelm the victim into approving one. MITRE ATT&CK categorises this under the credential access tactic.
+
+T1621
+
+Multi-Factor Authentication Request Generation — adversaries attempt to bypass MFA by generating repeated authentication requests, exploiting the human tendency to approve prompts to stop the noise. Exactly what happened to Mark Smith on the evening of 25 February.
 
 ### 🔧 KQL Query Used
 <Add KQL here>
@@ -1126,7 +1151,11 @@ EmailEvents
 | Command Line | <Placeholder> |
 
 ### 💡 Why it matters
-<Explain impact, risk, and relevance>
+Inbox rules used to hide attacker activity fall under the Email Hiding Rules sub-technique in MITRE ATT&CK under the Defence Evasion tactic.
+
+T1564.008
+
+Hide Artifacts: Email Hiding Rules — adversaries create inbox rules to automatically move, delete, or forward emails to conceal their activity from the victim. Exactly what the attacker did with both the . forwarding rule and the .. deletion rule to hide financial emails and security alerts from Mark.
 
 ### 🔧 KQL Query Used
 <Add KQL here>
@@ -1163,7 +1192,11 @@ EmailEvents
 | Command Line | <Placeholder> |
 
 ### 💡 Why it matters
-<Explain impact, risk, and relevance>
+The threat group described — financially motivated, targeting MFA fatigue, BEC, hospitality and retail sectors, known for MGM Resorts and Caesars Entertainment attacks — is Scattered Spider (UNC3944). Their known methodology involves purchasing credentials harvested by a specific malware category sold on dark web marketplaces.
+
+Infostealer
+
+Infostealer malware silently harvests saved passwords, session cookies, browser credentials, and autofill data from infected machines and exfiltrates them to attacker-controlled infrastructure. These logs are then sold on dark web markets like Russian Market and 2easy. Scattered Spider purchases these stealer logs to obtain valid credentials before launching MFA fatigue attacks — meaning Mark's password was likely already compromised long before the evening of 25 February.
 
 ### 🔧 KQL Query Used
 <Add KQL here>
@@ -1200,7 +1233,7 @@ EmailEvents
 | Command Line | <Placeholder> |
 
 ### 💡 Why it matters
-<Explain impact, risk, and relevance>
+Disabling the account immediately blocks all access — session, password, everything — in a single action. It's often cited as the single most important first containment step in BEC incidents.
 
 ### 🔧 KQL Query Used
 <Add KQL here>
@@ -1237,44 +1270,11 @@ EmailEvents
 | Command Line | <Placeholder> |
 
 ### 💡 Why it matters
-<Explain impact, risk, and relevance>
+Every TTP in this investigation matches their known playbook: MFA fatigue/push bombing, help desk social engineering, BEC targeting finance teams, use of legitimate cloud infrastructure, and high-profile attacks on MGM Resorts and Caesars Entertainment in 2023.
 
-### 🔧 KQL Query Used
-<Add KQL here>
+Scattered Spider
 
-### 🖼️ Screenshot
-<Insert screenshot>
-
-### 🛠️ Detection Recommendation
-
-**Hunting Tip:**  
-<Actionable guidance for defenders>
-
-</details>
-
----
-
-<details>
-<summary id="-flag-30">🚩 <strong>Flag 30: <Technique Name></strong></summary>
-
-### 🎯 Objective
-<What the attacker was trying to accomplish>
-
-### 📌 Finding
-<High-level description of the activity>
-
-### 🔍 Evidence
-
-| Field | Value |
-|------|-------|
-| Host | <Placeholder> |
-| Timestamp | <Placeholder> |
-| Process | <Placeholder> |
-| Parent Process | <Placeholder> |
-| Command Line | <Placeholder> |
-
-### 💡 Why it matters
-<Explain impact, risk, and relevance>
+Also tracked as UNC3944 and Octo Tempest by various vendors. A financially motivated threat group known for native English speakers, sophisticated social engineering, and living-off-the-land techniques inside Microsoft 365 environments. This investigation matches their signature end-to-end.
 
 ### 🔧 KQL Query Used
 <Add KQL here>
