@@ -105,7 +105,8 @@ Answer what happened, why it matters, and what was discovered in 3–4 sentences
 | 16 | MITRE ATT&CK: T1564 – Hide Artifacts | <T1114.003 – Email Forwarding Rule & T1098 – Account Manipulation | 🔴 MITRE Priority: P1 (Critical) |
 | 17 | MITRE ATT&CK: T1566.002 – Phishing: Spearphishing Link | T1657 – Financial Theft & T1078 – Valid Accounts | 🔴 MITRE Priority: P1 (Critical) |
 | 18 | MITRE ATT&CK: T1566.002 – Phishing: Spearphishing Link | T1657 – Financial Theft & T1078 – Valid Accounts | 🔴 MITRE Priority: P1 (Critical) |
-| 19 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
+| 19 | MITRE ATT&CK: T1566.002 – Phishing: Spearphishing Link | T1078 – Valid Accounts & T1562 – Impair Defenses | 🔴 MITRE Priority: P1 (Critical)
+ |
 | 20 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 | 21 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 | 22 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
@@ -899,23 +900,23 @@ Query `EmailEvents` for `Subject startswith "RE:"` and correlate with `SenderIPv
 <summary id="-flag-19">🚩 <strong>Flag 19: <Technique Name></strong></summary>
 
 ### 🎯 Objective
-<What the attacker was trying to accomplish>
+The attacker aimed to bypass external email security controls by sending the fraudulent invoice internally, leveraging trust between employees to increase the likelihood of payment approval.
 
 ### 📌 Finding
-<High-level description of the activity>
+The malicious email was sent with **EmailDirection: Intra-org**, confirming it was delivered internally from one employee to another, avoiding traditional email gateway protections.
 
 ### 🔍 Evidence
 
 | Field | Value |
 |------|-------|
-| Host | <Placeholder> |
-| Timestamp | <Placeholder> |
-| Process | <Placeholder> |
-| Parent Process | <Placeholder> |
-| Command Line | <Placeholder> |
+| Host | Microsoft 365 / Exchange Online |
+| Timestamp | 2026-02-25T22:06:39Z |
+| Process | Email sent (internal communication) |
+| Parent Process | Compromised Outlook Web session |
+| Command Line | N/A — cloud-based email activity |
 
 ### 💡 Why it matters
-<Explain impact, risk, and relevance>
+Internal emails are typically trusted and often bypass stricter filtering applied to external messages. This makes BEC attacks significantly more effective, as security controls are weaker and recipients are less suspicious of internal communications.
 
 ### 🔧 KQL Query Used
 EmailEvents
@@ -929,9 +930,10 @@ EmailEvents
 <img width="1276" height="976" alt="image" src="https://github.com/user-attachments/assets/289defba-4f99-45d6-8fdd-158d6f7a9b83" />
 
 ### 🛠️ Detection Recommendation
+Implement monitoring for anomalous internal email behavior, especially financial requests. Apply conditional access and anomaly detection to flag internal emails sent from unusual IPs, devices, or geolocations.
 
 **Hunting Tip:**  
-<Actionable guidance for defenders>
+Query `EmailEvents` for `EmailDirection == "Intra-org"` and correlate with `SigninLogs`. Look for internal emails sent shortly after suspicious logins, particularly those involving financial language or unusual sender behavior.
 
 </details>
 
