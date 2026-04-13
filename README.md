@@ -100,7 +100,7 @@ Answer what happened, why it matters, and what was discovered in 3–4 sentences
 | 11 | MITRE ATT&CK: T1114.003 – Email Forwarding Rule | <T1036 – Masquerading & T1098 – Account Manipulation | 🔴 MITRE Priority: P1 (Critical) |
 | 12 | MITRE ATT&CK: T1114.003 – Email Forwarding Rule | T1041 – Exfiltration Over C2 Channel & T1098 – Account Manipulation | 🔴 MITRE Priority: P1 (Critical) |
 | 13 | MITRE ATT&CK: T1114.003 – Email Forwarding Rule | T1114.001 – Local Email Collection & T1657 – Financial Theft | 🔴 MITRE Priority: P1 (Critical)
- |
+|
 | 14 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 | 15 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 | 16 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
