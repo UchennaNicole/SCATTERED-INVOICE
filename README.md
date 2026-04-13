@@ -109,7 +109,7 @@ Answer what happened, why it matters, and what was discovered in 3–4 sentences
 | 20 | MITRE ATT&CK: T1078 – Valid Accounts | T1566.002 – Phishing: Spearphishing Link & 1657 – Financial Theft | 🔴 MITRE Priority: P1 (Critical) |
 | 21 | MITRE ATT&CK: T1213 – Data from Information Repositories | T1213.002 – SharePoint / OneDrive & T1078 – Valid Accounts | 🔴 MITRE Priority: P1 (Critical)|
 | 22 | MITRE ATT&CK: T1213 – Data from Information Repositories | <T1213.002 – SharePoint / OneDrive & T1078 – Valid Accounts | 🔴 MITRE Priority: P1 (Critical)|
-| 23 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
+| 23 | MITRE ATT&CK: T1078 – Valid Accounts | T1078.004 – Cloud Accounts & T1539 – Steal Web Session Cookie | 🔴 MITRE Priority: P1 (Critical) |
 | 24 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 | 25 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 | 26 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
@@ -1069,23 +1069,23 @@ Correlate application access across `SigninLogs` by IP and user. Look for rapid 
 <summary id="-flag-23">🚩 <strong>Flag 23: <Technique Name></strong></summary>
 
 ### 🎯 Objective
-<What the attacker was trying to accomplish>
+The attacker aimed to maintain a single authenticated session across Microsoft 365 services to execute the full attack chain—mailbox access, inbox rule creation, internal fraud email delivery, and broader data access—without interruption.
 
 ### 📌 Finding
-<High-level description of the activity>
+The session ID **`00225cfa-a0ff-fb46-a079-5d152fcdf72a`** links the attacker’s successful authentication to subsequent CloudAppEvents activity, confirming the same compromised session was used throughout the intrusion.
 
 ### 🔍 Evidence
 
 | Field | Value |
 |------|-------|
-| Host | <Placeholder> |
-| Timestamp | <Placeholder> |
-| Process | <Placeholder> |
-| Parent Process | <Placeholder> |
-| Command Line | <Placeholder> |
+| Host | Microsoft 365 / Azure AD / Exchange Online |
+| Timestamp | 2026-02-25 attack window |
+| Process | Successful cloud authentication tied to post-authentication activity |
+| Parent Process | MFA-fatigue-enabled account takeover |
+| Command Line | N/A — cloud session correlation via `AADSessionId` / `SessionId` |
 
 ### 💡 Why it matters
-<Explain impact, risk, and relevance>
+This is the strongest correlation point in the investigation. Matching session identifiers across sign-in and post-authentication telemetry proves continuity of attacker activity from login to fraud execution. It eliminates doubt about whether separate events were related and provides high-confidence attribution for scoping, containment, and reporting.
 
 ### 🔧 KQL Query Used
 CloudAppEvents
@@ -1100,9 +1100,10 @@ CloudAppEvents
 <img width="1576" height="748" alt="image" src="https://github.com/user-attachments/assets/ac3a3a7d-77cf-445d-9d52-8b41755fe58a" />
 
 ### 🛠️ Detection Recommendation
+Correlate `SigninLogs.SessionId` with `CloudAppEvents` session identifiers such as `AppAccessContext.AADSessionId`. Alert when a suspicious session spans multiple applications or performs risky actions like mailbox access, inbox rule creation, internal email sending, and file access.
 
 **Hunting Tip:**  
-<Actionable guidance for defenders>
+When investigating cloud compromises, pivot on session identifiers—not just user and IP. A shared session ID across `SigninLogs`, `CloudAppEvents`, and related mail activity is one of the clearest ways to reconstruct the full attack path end to end.
 
 </details>
 
