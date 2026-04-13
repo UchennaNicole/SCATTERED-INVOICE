@@ -113,7 +113,7 @@ Answer what happened, why it matters, and what was discovered in 3–4 sentences
 | 24 | MITRE ATT&CK: T1078 – Valid Accounts | T1556 – Modify Authentication Process & T1621 – Multi-Factor Authentication Request Generation | 🔴 MITRE Priority: P1 (Critical) |
 | 25 | MITRE ATT&CK: T1621 – Multi-Factor Authentication Request Generation | T1078 – Valid Accounts | 🔴 MITRE Priority: P1 (Critical) |
 | 26 | MITRE ATT&CK: T1564.008 – Hide Artifacts: Email Hiding Rules | <Placeholder> | 🔴 MITRE Priority: P1 (Critical)|
-| 27 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
+| 27 | MITRE ATT&CK: T1555 – Credentials from Password Stores | T1555.003 – Credentials from Web Browsers | 🔴 MITRE Priority: P1 (Critical) |
 | 28 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 | 29 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 ---
@@ -1258,22 +1258,23 @@ Query `CloudAppEvents` for `ActionType == "New-InboxRule"` and parse `RawEventDa
 <summary id="-flag-27">🚩 <strong>Flag 27: <Technique Name></strong></summary>
 
 ### 🎯 Objective
-<What the attacker was trying to accomplish>
+The attacker aimed to obtain valid user credentials prior to launching the MFA fatigue attack, enabling a higher likelihood of successful account compromise.
 
 ### 📌 Finding
-<High-level description of the activity>
+The credentials used in the attack were likely sourced from **infostealer malware**, which harvests saved passwords, session tokens, and browser data from infected endpoints and sells them on underground markets.
 
 ### 🔍 Evidence
 
 | Field | Value |
 |------|-------|
-| Host | <Placeholder> |
-| Timestamp | <Placeholder> |
-| Process | <Placeholder> |
-| Parent Process | <Placeholder> |
-| Command Line | <Placeholder> |
+| Host | User endpoint (infected device) |
+| Timestamp | Prior to 2026-02-25 (initial compromise stage) |
+| Process | Infostealer malware execution |
+| Parent Process | User-initiated download / malicious payload (phishing, cracked software, etc.) |
+| Command Line | N/A — varies by malware family (e.g., RedLine, Raccoon, Vidar) |
 
 ### 💡 Why it matters
+This explains how the attacker already had valid credentials before initiating MFA fatigue. Infostealer infections create a **pre-compromise condition**, allowing attackers to bypass traditional defenses and move directly into account takeover. It also means **other accounts may be compromised**, expanding the potential blast radius.
 The threat group described — financially motivated, targeting MFA fatigue, BEC, hospitality and retail sectors, known for MGM Resorts and Caesars Entertainment attacks — is Scattered Spider (UNC3944). Their known methodology involves purchasing credentials harvested by a specific malware category sold on dark web marketplaces.
 
 Infostealer
@@ -1284,12 +1285,16 @@ Infostealer malware silently harvests saved passwords, session cookies, browser 
 <Add KQL here>
 
 ### 🖼️ Screenshot
-<Insert screenshot>
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/e76387e2-b775-4740-9056-269e8c47cfb7" />
 
 ### 🛠️ Detection Recommendation
-
+- Deploy **EDR/XDR** to detect infostealer behavior (browser credential dumping, suspicious exfiltration)  
+- Monitor for **credential exposure in dark web intelligence feeds**  
+- Enforce **password resets and session revocation** after suspected compromise  
+- Implement **passwordless or phishing-resistant authentication (FIDO2)**
+  
 **Hunting Tip:**  
-<Actionable guidance for defenders>
+Search endpoint telemetry for processes accessing browser credential stores (e.g., Chrome Login Data, Edge Web Data). Correlate with outbound connections to suspicious domains or IPs—this is a common pattern for **infostealer exfiltration activity**.
 
 </details>
 
