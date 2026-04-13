@@ -106,7 +106,7 @@ Answer what happened, why it matters, and what was discovered in 3–4 sentences
 | 17 | MITRE ATT&CK: T1566.002 – Phishing: Spearphishing Link | T1657 – Financial Theft & T1078 – Valid Accounts | 🔴 MITRE Priority: P1 (Critical) |
 | 18 | MITRE ATT&CK: T1566.002 – Phishing: Spearphishing Link | T1657 – Financial Theft & T1078 – Valid Accounts | 🔴 MITRE Priority: P1 (Critical) |
 | 19 | MITRE ATT&CK: T1566.002 – Phishing: Spearphishing Link | T1078 – Valid Accounts & T1562 – Impair Defenses | 🔴 MITRE Priority: P1 (Critical)|
-| 20 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
+| 20 | MITRE ATT&CK: T1078 – Valid Accounts | T1566.002 – Phishing: Spearphishing Link & 1657 – Financial Theft | 🔴 MITRE Priority: P1 (Critical) |
 | 21 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 | 22 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 | 23 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
@@ -942,23 +942,23 @@ Query `EmailEvents` for `EmailDirection == "Intra-org"` and correlate with `Sign
 <summary id="-flag-20">🚩 <strong>Flag 20: <Technique Name></strong></summary>
 
 ### 🎯 Objective
-<What the attacker was trying to accomplish>
+The attacker aimed to execute fraud using the same authenticated session, ensuring continuity between account compromise and malicious email delivery without interruption.
 
 ### 📌 Finding
-<High-level description of the activity>
+The **SenderIPv4 (205.147.16.190)** on the fraudulent email matches the attacker’s sign-in IP, confirming the same session was used for both authentication and BEC execution.
 
 ### 🔍 Evidence
 
 | Field | Value |
 |------|-------|
-| Host | <Placeholder> |
-| Timestamp | <Placeholder> |
-| Process | <Placeholder> |
-| Parent Process | <Placeholder> |
-| Command Line | <Placeholder> |
+| Host | Microsoft 365 / Exchange Online |
+| Timestamp | 2026-02-25T22:06:39Z |
+| Process | Email sent (authenticated session) |
+| Parent Process | Compromised Outlook Web session |
+| Command Line | N/A — cloud-based email activity |
 
 ### 💡 Why it matters
-<Explain impact, risk, and relevance>
+This correlation definitively links the compromise to the fraud activity. It eliminates ambiguity by proving the attacker didn’t just gain access—they actively used that session to execute the attack. This strengthens attribution, accelerates incident response, and supports containment decisions.
 
 ### 🔧 KQL Query Used
 EmailEvents
@@ -972,9 +972,10 @@ EmailEvents
 <img width="1140" height="856" alt="image" src="https://github.com/user-attachments/assets/90d97795-b16d-42e4-b387-ed19e9fcf945" />
 
 ### 🛠️ Detection Recommendation
+Correlate `SigninLogs` and `EmailEvents` using IP address, timestamp, and user identity. Flag cases where suspicious sign-in IPs are reused for outbound email activity, especially involving financial or sensitive content.
 
 **Hunting Tip:**  
-<Actionable guidance for defenders>
+Join `SigninLogs` and `EmailEvents` on `UserPrincipalName` and IP fields. Look for matching IPs across authentication and email activity within short time windows—this is a strong indicator of active account misuse.
 
 </details>
 
