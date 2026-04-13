@@ -108,8 +108,7 @@ Answer what happened, why it matters, and what was discovered in 3–4 sentences
 | 19 | MITRE ATT&CK: T1566.002 – Phishing: Spearphishing Link | T1078 – Valid Accounts & T1562 – Impair Defenses | 🔴 MITRE Priority: P1 (Critical)|
 | 20 | MITRE ATT&CK: T1078 – Valid Accounts | T1566.002 – Phishing: Spearphishing Link & 1657 – Financial Theft | 🔴 MITRE Priority: P1 (Critical) |
 | 21 | MITRE ATT&CK: T1213 – Data from Information Repositories | T1213.002 – SharePoint / OneDrive & T1078 – Valid Accounts | 🔴 MITRE Priority: P1 (Critical)|
-| 22 | MITRE ATT&CK: T1213 – Data from Information Repositories | <T1213.002 – SharePoint / OneDrive & T1078 – Valid Accounts | 🔴 MITRE Priority: P1 (Critical)
- |
+| 22 | MITRE ATT&CK: T1213 – Data from Information Repositories | <T1213.002 – SharePoint / OneDrive & T1078 – Valid Accounts | 🔴 MITRE Priority: P1 (Critical)|
 | 23 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 | 24 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 | 25 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
