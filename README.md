@@ -96,7 +96,7 @@ Answer what happened, why it matters, and what was discovered in 3–4 sentences
 | 7 | MITRE ATT&CK: T1078.004 – Valid Accounts: Cloud Accounts | T1204 – User Execution | 🟠 MITRE Priority: P2 (High)|
 | 8 | MITRE ATT&CK: T1078.004 – Valid Accounts: Cloud Accounts | T1036 – Masquerading | 🟠 MITRE Priority: P2 (High) |
 | 9 | MITRE ATT&CK: T1114 – Email Collection | T1114.002 – Remote Email Collection | 🔴 MITRE Priority: P1 (Critical) |
-| 10 | <Placeholder> | <Placeholder> | <Placeholder> |
+| 10 | MITRE ATT&CK: T1114.003 – Email Forwarding Rule | T1098 – Account Manipulation | 🔴 MITRE Priority: P1 (Critical) |
 | 11 | <Placeholder> | <Placeholder> | <Placeholder> |
 | 12 | <Placeholder> | <Placeholder> | <Placeholder> |
 | 13 | <Placeholder> | <Placeholder> | <Placeholder> |
@@ -504,23 +504,23 @@ Query `CloudAppEvents` for `ActionType == "MailItemsAccessed"` and correlate wit
 <summary id="-flag-10">🚩 <strong>Flag 10: <Technique Name></strong></summary>
 
 ### 🎯 Objective
-<What the attacker was trying to accomplish>
+The attacker aimed to establish persistence within the compromised mailbox by creating inbox rules to monitor, redirect, or hide email communications.
 
 ### 📌 Finding
-<High-level description of the activity>
+The attacker created **New-InboxRule** entries shortly after gaining access, indicating deliberate persistence. These rules allow the attacker to maintain visibility into communications and potentially forward or conceal emails without user awareness.
 
 ### 🔍 Evidence
 
 | Field | Value |
 |------|-------|
-| Host | <Placeholder> |
-| Timestamp | <Placeholder> |
-| Process | <Placeholder> |
-| Parent Process | <Placeholder> |
-| Command Line | <Placeholder> |
+| Host | Microsoft 365 / Exchange Online |
+| Timestamp | 2026-02-25 ~22:02–22:03 UTC |
+| Process | New-InboxRule (mailbox rule creation) |
+| Parent Process | Compromised account session via Outlook Web |
+| Command Line | N/A — cloud-based mailbox configuration change |
 
 ### 💡 Why it matters
-<Explain impact, risk, and relevance>
+Inbox rules are a stealthy persistence mechanism in BEC attacks. They allow attackers to automatically forward emails, delete evidence, or monitor conversations long-term without re-authenticating. This ensures continued access even if the user regains control of the account.
 
 ### 🔧 KQL Query Used
 CloudAppEvents
@@ -534,9 +534,10 @@ CloudAppEvents
 <img width="1872" height="636" alt="image" src="https://github.com/user-attachments/assets/3ffbba5b-7502-45c2-9c30-15807aa3f9f3" />
 
 ### 🛠️ Detection Recommendation
+Alert on creation of new inbox rules, especially from unfamiliar IPs, devices, or geolocations. Monitor for rules that forward emails externally, move messages to hidden folders, or delete financial communications.
 
 **Hunting Tip:**  
-<Actionable guidance for defenders>
+Query `CloudAppEvents` for `ActionType == "New-InboxRule"` and correlate with suspicious sign-in activity. Focus on rules created shortly after anomalous logins—this is a strong indicator of persistence setup in BEC attacks.
 
 </details>
 
