@@ -104,7 +104,7 @@ Answer what happened, why it matters, and what was discovered in 3–4 sentences
 | 15 | MITRE ATT&CK: T1114.003 – Email Forwarding Rule | T1564 – Hide Artifacts & T1098 – Account Manipulation | 🔴 MITRE Priority: P1 (Critical) |
 | 16 | MITRE ATT&CK: T1564 – Hide Artifacts | <T1114.003 – Email Forwarding Rule & T1098 – Account Manipulation | 🔴 MITRE Priority: P1 (Critical) |
 | 17 | MITRE ATT&CK: T1566.002 – Phishing: Spearphishing Link | T1657 – Financial Theft & T1078 – Valid Accounts | 🔴 MITRE Priority: P1 (Critical) |
-| 18 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
+| 18 | MITRE ATT&CK: T1566.002 – Phishing: Spearphishing Link | T1657 – Financial Theft & T1078 – Valid Accounts | 🔴 MITRE Priority: P1 (Critical) |
 | 19 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 | 20 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 | 21 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
@@ -855,23 +855,23 @@ Query `EmailEvents` for emails sent from compromised users and correlate with `S
 <summary id="-flag-18">🚩 <strong>Flag 18: <Technique Name></strong></summary>
 
 ### 🎯 Objective
-<What the attacker was trying to accomplish>
+The attacker aimed to increase the success rate of fraud by hijacking an existing email thread and inserting malicious banking details under the guise of a legitimate ongoing conversation.
 
 ### 📌 Finding
-<High-level description of the activity>
+The attacker sent an email with the subject **"RE: Invoice #INV-2026-0892 - Updated Banking Details"**, indicating **thread hijacking**. Instead of creating a new email, they replied within an existing conversation to appear trusted and legitimate.
 
 ### 🔍 Evidence
 
 | Field | Value |
 |------|-------|
-| Host | <Placeholder> |
-| Timestamp | <Placeholder> |
-| Process | <Placeholder> |
-| Parent Process | <Placeholder> |
-| Command Line | <Placeholder> |
+| Host | Microsoft 365 / Exchange Online |
+| Timestamp | 2026-02-25T22:06:39Z |
+| Process | Email sent (thread reply) |
+| Parent Process | Compromised Outlook Web session |
+| Command Line | N/A — cloud-based email activity |
 
 ### 💡 Why it matters
-<Explain impact, risk, and relevance>
+Thread hijacking is a highly effective BEC tactic. By replying within an existing conversation, the attacker bypasses suspicion, inherits trust, and increases the likelihood the recipient will act on the request. This significantly raises the probability of successful financial fraud.
 
 ### 🔧 KQL Query Used
 EmailEvents
@@ -886,9 +886,10 @@ EmailEvents
 
 
 ### 🛠️ Detection Recommendation
+Detect reply-chain anomalies, such as emails sent from unusual IPs or devices within existing threads. Monitor for subject lines beginning with "RE:" combined with financial language and sent from anomalous sessions.
 
 **Hunting Tip:**  
-<Actionable guidance for defenders>
+Query `EmailEvents` for `Subject startswith "RE:"` and correlate with `SenderIPv4` and `SigninLogs`. Look for replies sent from unfamiliar IPs, locations, or unmanaged devices—especially those containing financial terms like "invoice" or "banking details".
 
 </details>
 
