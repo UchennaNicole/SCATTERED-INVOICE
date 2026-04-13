@@ -98,7 +98,7 @@ Answer what happened, why it matters, and what was discovered in 3–4 sentences
 | 9 | MITRE ATT&CK: T1114 – Email Collection | T1114.002 – Remote Email Collection | 🔴 MITRE Priority: P1 (Critical) |
 | 10 | MITRE ATT&CK: T1114.003 – Email Forwarding Rule | T1098 – Account Manipulation | 🔴 MITRE Priority: P1 (Critical) |
 | 11 | MITRE ATT&CK: T1114.003 – Email Forwarding Rule | <T1036 – Masquerading & T1098 – Account Manipulation | 🔴 MITRE Priority: P1 (Critical) |
-| 12 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
+| 12 | MITRE ATT&CK: T1114.003 – Email Forwarding Rule | T1041 – Exfiltration Over C2 Channel & T1098 – Account Manipulation | 🔴 MITRE Priority: P1 (Critical) |
 | 13 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 | 14 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 | 15 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
@@ -590,23 +590,23 @@ Query `CloudAppEvents` for `ActionType == "New-InboxRule"` and inspect rule meta
 <summary id="-flag-12">🚩 <strong>Flag 12: <Technique Name></strong></summary>
 
 ### 🎯 Objective
-<What the attacker was trying to accomplish>
+The attacker aimed to exfiltrate and monitor the victim’s email communications by forwarding messages to an attacker-controlled external email account.
 
 ### 📌 Finding
-<High-level description of the activity>
+An inbox rule was configured to forward emails to **insights@duck.com**, confirming external data exfiltration and persistent monitoring of the mailbox. This indicates the attacker established a covert channel to receive sensitive communications.
 
 ### 🔍 Evidence
 
 | Field | Value |
 |------|-------|
-| Host | <Placeholder> |
-| Timestamp | <Placeholder> |
-| Process | <Placeholder> |
-| Parent Process | <Placeholder> |
-| Command Line | <Placeholder> |
+| Host | Microsoft 365 / Exchange Online |
+| Timestamp | 2026-02-25T22:02:33Z |
+| Process | New-InboxRule (email forwarding rule creation) |
+| Parent Process | Compromised Outlook Web session |
+| Command Line | N/A — cloud-based mailbox configuration |
 
 ### 💡 Why it matters
-<Explain impact, risk, and relevance>
+Forwarding rules to external addresses are a high-confidence indicator of BEC activity. This allows attackers to silently receive all incoming emails, including financial communications, without needing continuous access. It enables long-term surveillance and fraud execution while evading detection.
 
 ### 🔧 KQL Query Used
 CloudAppEvents
@@ -621,9 +621,10 @@ CloudAppEvents
 <img width="2270" height="852" alt="image" src="https://github.com/user-attachments/assets/286c1fc5-56f9-4caa-8df4-13550993ac73" />
 
 ### 🛠️ Detection Recommendation
+Block or alert on inbox rules that forward to external domains. Implement controls to restrict auto-forwarding outside the organization. Monitor for rule creation events involving external recipients, especially following suspicious sign-ins.
 
 **Hunting Tip:**  
-<Actionable guidance for defenders>
+Query `CloudAppEvents` for `ActionType == "New-InboxRule"` and expand rule parameters. Look specifically for `ForwardTo` values containing external domains. Correlate with anomalous IPs, geolocations, and unmanaged devices to confirm malicious persistence and exfiltration.
 
 </details>
 
