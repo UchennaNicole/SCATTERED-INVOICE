@@ -92,7 +92,101 @@ protection, MFA policy, and mailbox monitoring posture that require immediate re
 
 ## 🧠 Hunt Overview
 
-<High-level narrative describing the attack lifecycle, key behaviors observed, and why this hunt matters.>
+This hunt investigated a confirmed Business Email Compromise (BEC) incident targeting 
+the finance department of LogN Pacific Financial Services, initiated after the 
+organization's bank fraud department flagged a suspicious £24,500 wire transfer on 
+26 February 2026. The investigation was conducted entirely within Microsoft Sentinel 
+against three telemetry sources — `SigninLogs`, `CloudAppEvents`, and `EmailEvents` — 
+covering a two-hour window beginning 25 February 2026 at 21:00 UTC.
+
+---
+
+### 🔗 Attack Lifecycle
+
+The attack followed a precise, multi-stage kill chain consistent with financially 
+motivated identity-based intrusions:
+
+**Stage 1 — Pre-Compromise (Credential Theft)**  
+Prior to the attack window, the threat actor obtained valid credentials for finance 
+employee Mark Smith (`m.smith@lognpacific.org`), almost certainly through infostealer 
+malware logs purchased from underground markets. This pre-compromise condition meant 
+the attacker arrived with a working password, requiring only MFA bypass to achieve 
+full account access.
+
+**Stage 2 — Initial Access (MFA Fatigue)**  
+Beginning at 21:54 UTC, the attacker initiated a push bombing campaign from IP 
+`205.147.16.190` (Netherlands), generating repeated MFA authentication requests 
+against Mark's account. After three failed attempts logged as `ResultType 50074`, 
+Mark approved one prompt at approximately 21:59 UTC to stop the notifications — 
+granting the attacker a fully authenticated session. The attacker operated from an 
+unmanaged Ubuntu Linux endpoint using Firefox 147.0, presenting a device profile 
+entirely inconsistent with Mark's normal managed Windows / Microsoft Edge baseline. 
+No Conditional Access policies were applied to block or challenge the anomalous session.
+
+**Stage 3 — Reconnaissance (Mailbox Access)**  
+The attacker's first post-authentication action was `MailItemsAccessed` at 21:56 UTC, 
+confirming deliberate inbox reconnaissance. Rather than immediately exfiltrating or 
+establishing persistence, the attacker read existing email threads to identify active 
+financial conversations, vendor relationships, and communication tone — the hallmark 
+of a targeted BEC operation rather than opportunistic account abuse.
+
+**Stage 4 — Persistence (Inbox Rule Creation)**  
+Within minutes of gaining access, the attacker created two covert inbox rules at 22:02 
+and 22:03 UTC, both named using near-invisible punctuation characters (`.` and `..`) 
+to evade casual inspection:
+- **Rule 1 (`.`)** — Forwarded all emails containing `invoice, payment, wire, transfer` 
+to attacker-controlled address `insights@duck.com`, establishing a persistent financial 
+intelligence feed.
+- **Rule 2 (`..`)** — Automatically deleted any emails containing `suspicious, security, 
+phishing, unusual, compromised, verify`, ensuring Mark would never receive breach 
+notifications, security alerts, or IT warnings about the compromise.
+
+Both rules were configured with `StopProcessingRules: True`, preventing any legitimate 
+user rules from processing matched emails and guaranteeing attacker rule priority.
+
+**Stage 5 — Fraud Execution (BEC / Thread Hijacking)**  
+At 22:04 UTC the attacker drafted a fraudulent email, and at 22:06 UTC sent it from 
+Mark's compromised account to colleague `j.reynolds@lognpacific.org` with the subject 
+`RE: Invoice #INV-2026-0892 - Updated Banking Details`. The `RE:` prefix confirms 
+deliberate thread hijacking — the attacker located an active invoice conversation in 
+Mark's inbox and inserted the fraudulent banking details as a trusted reply, 
+dramatically increasing the probability the recipient would act without suspicion. 
+The email was delivered as `Intra-org`, bypassing external gateway protections entirely. 
+The sender IP `205.147.16.190` on the email directly matched the attacker's sign-in IP, 
+providing definitive cross-table attribution.
+
+**Stage 6 — Scope Expansion (Cloud Data Access)**  
+Following fraud execution, the attacker pivoted beyond the mailbox, accessing 
+`Microsoft OneDrive for Business` at 22:07 UTC and authenticating to 
+`Microsoft SharePoint Online` — broadening the potential data exposure to shared 
+organizational files, financial records, and business-critical documents. The entire 
+attack was conducted within a single authenticated session, confirmed by AAD session 
+ID `00225cfa-a0ff-fb46-a079-5d152fcdf72a` linking all activity across all three 
+telemetry tables.
+
+---
+
+### 🎯 Why This Hunt Matters
+
+This investigation matters for three reasons beyond the immediate £24,500 financial 
+impact. First, it demonstrates that **MFA alone is not sufficient protection** against 
+a determined adversary — push-based authentication is systematically exploitable through 
+social engineering, and the absence of phishing-resistant MFA methods left a critical 
+gap that the attacker exploited in under five minutes. Second, it exposes a **complete 
+failure of detective controls** — the attacker moved from initial access to fraud 
+execution in 35 minutes without triggering a single internal alert, meaning the 
+organization's detection maturity was entirely insufficient for the threat actor profile 
+it faced. Third, the TTP alignment with **Scattered Spider (UNC3944 / Octo Tempest)** 
+indicates LogN Pacific was targeted by one of the most active and capable financially 
+motivated threat groups currently operating, known for high-profile breaches of MGM 
+Resorts, Caesars Entertainment, and multiple UK retailers — organizations with 
+significantly more mature security programs than what this investigation reveals at 
+LogN Pacific.
+
+The hunt validates the full attack chain across all six phases, maps every observed 
+behavior to MITRE ATT&CK, and identifies concrete, actionable defensive gaps that — 
+if remediated — would either prevent this attack entirely or significantly reduce 
+dwell time and impact in a repeat attempt.
 
 ---
 
