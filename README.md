@@ -111,7 +111,7 @@ Answer what happened, why it matters, and what was discovered in 3–4 sentences
 | 22 | MITRE ATT&CK: T1213 – Data from Information Repositories | <T1213.002 – SharePoint / OneDrive & T1078 – Valid Accounts | 🔴 MITRE Priority: P1 (Critical)|
 | 23 | MITRE ATT&CK: T1078 – Valid Accounts | T1078.004 – Cloud Accounts & T1539 – Steal Web Session Cookie | 🔴 MITRE Priority: P1 (Critical) |
 | 24 | MITRE ATT&CK: T1078 – Valid Accounts | T1556 – Modify Authentication Process & T1621 – Multi-Factor Authentication Request Generation | 🔴 MITRE Priority: P1 (Critical) |
-| 25 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
+| 25 | MITRE ATT&CK: T1621 – Multi-Factor Authentication Request Generation | T1078 – Valid Accounts | 🔴 MITRE Priority: P1 (Critical) |
 | 26 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 | 27 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 | 28 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
@@ -1160,22 +1160,25 @@ Query `SigninLogs` for `ConditionalAccessStatus == "notApplied"` on successful l
 <summary id="-flag-25">🚩 <strong>Flag 25: <Technique Name></strong></summary>
 
 ### 🎯 Objective
-<What the attacker was trying to accomplish>
+The attacker aimed to bypass multi-factor authentication by overwhelming the user with repeated MFA push notifications until one was approved, granting unauthorized access.
 
 ### 📌 Finding
-<High-level description of the activity>
+Multiple MFA prompts were generated against the same user account (Mark Smith), consistent with an **MFA fatigue / push bombing attack**, ultimately resulting in a successful authentication.
 
 ### 🔍 Evidence
 
 | Field | Value |
 |------|-------|
-| Host | <Placeholder> |
-| Timestamp | <Placeholder> |
-| Process | <Placeholder> |
-| Parent Process | <Placeholder> |
-| Command Line | <Placeholder> |
+| Host | Azure AD / Microsoft 365 |
+| Timestamp | 2026-02-25 (evening, prior to successful login) |
+| Process | Repeated MFA authentication requests |
+| Parent Process | Malicious sign-in attempts from attacker IP |
+| Command Line | N/A — cloud-based authentication activity |
 
 ### 💡 Why it matters
+
+MFA fatigue exploits human behavior rather than technical vulnerabilities. Even with MFA enabled, attackers can gain access if users approve malicious prompts. This bypasses a critical security control and enables full account takeover, as seen in this incident.
+
 MFA fatigue / push bombing is a social engineering technique where an attacker repeatedly sends MFA push notifications to overwhelm the victim into approving one. MITRE ATT&CK categorises this under the credential access tactic.
 
 T1621
@@ -1183,15 +1186,19 @@ T1621
 Multi-Factor Authentication Request Generation — adversaries attempt to bypass MFA by generating repeated authentication requests, exploiting the human tendency to approve prompts to stop the noise. Exactly what happened to Mark Smith on the evening of 25 February.
 
 ### 🔧 KQL Query Used
-<Add KQL here>
+N/A
 
 ### 🖼️ Screenshot
-<Insert screenshot>
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/04cd65e4-b73c-4324-82bc-33575fbbf566" />
 
 ### 🛠️ Detection Recommendation
-
+- Enable **MFA number matching** or **phishing-resistant MFA (FIDO2, hardware keys)**  
+- Configure alerts for **excessive MFA requests within short timeframes**  
+- Implement **Azure AD Identity Protection** to detect risky sign-ins  
+- Educate users to **deny unexpected MFA prompts and report immediately**
+  
 **Hunting Tip:**  
-<Actionable guidance for defenders>
+Query `SigninLogs` for high volumes of MFA requests (`AuthenticationRequirement == "multiFactorAuthentication"`) followed by a successful login from the same IP. Look for patterns of repeated failures or prompts preceding a success—this is a strong indicator of MFA fatigue attacks.
 
 </details>
 
