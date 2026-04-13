@@ -13,8 +13,21 @@
 
 ## 📌 Executive Summary
 
-<Brief, high-level overview of the threat hunt.  
-Answer what happened, why it matters, and what was discovered in 3–4 sentences.>
+On the evening of 25 February 2026, a threat actor consistent with **Scattered Spider (UNC3944)** 
+successfully compromised the Microsoft 365 account of Mark Smith, a finance employee at 
+LogN Pacific Financial Services, through a deliberate MFA fatigue attack originating from 
+a Netherlands-based IP address (`205.147.16.190`). Using pre-obtained credentials likely 
+sourced from infostealer malware, the attacker bypassed multi-factor authentication by 
+flooding the victim with repeated push notifications until one was approved, then 
+immediately accessed Outlook Web, created two covert inbox rules to forward financial 
+emails to an attacker-controlled address (`insights@duck.com`) and silently delete 
+security alerts, and sent a fraudulent thread-hijacked invoice email to a colleague 
+that resulted in a £24,500 wire transfer being initiated to an unknown account. This 
+investigation confirms a complete kill chain — from initial credential access through 
+to financial fraud execution — across three data sources (`SigninLogs`, `CloudAppEvents`, 
+`EmailEvents`), with the funds only frozen due to external bank-side fraud detection 
+rather than any internal control, exposing critical gaps in LogN Pacific's identity 
+protection, MFA policy, and mailbox monitoring posture that require immediate remediation.
 
 ---
 
