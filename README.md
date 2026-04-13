@@ -103,7 +103,7 @@ Answer what happened, why it matters, and what was discovered in 3–4 sentences
 | 14 | MITRE ATT&CK: T1114.003 – Email Forwarding Rule | T1564 – Hide Artifacts & T1098 – Account Manipulation | 🔴 MITRE Priority: P1 (Critical) |
 | 15 | MITRE ATT&CK: T1114.003 – Email Forwarding Rule | T1564 – Hide Artifacts & T1098 – Account Manipulation | 🔴 MITRE Priority: P1 (Critical) |
 | 16 | MITRE ATT&CK: T1564 – Hide Artifacts | <T1114.003 – Email Forwarding Rule & T1098 – Account Manipulation | 🔴 MITRE Priority: P1 (Critical) |
-| 17 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
+| 17 | MITRE ATT&CK: T1566.002 – Phishing: Spearphishing Link | T1657 – Financial Theft & T1078 – Valid Accounts | 🔴 MITRE Priority: P1 (Critical) |
 | 18 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 | 19 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 | 20 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
@@ -812,23 +812,23 @@ Query `CloudAppEvents` and expand `SubjectOrBodyContainsWords`. Flag rules targe
 <summary id="-flag-17">🚩 <strong>Flag 17: <Technique Name></strong></summary>
 
 ### 🎯 Objective
-<What the attacker was trying to accomplish>
+The attacker aimed to execute Business Email Compromise by sending a fraudulent invoice from the compromised account to a finance-related employee to initiate unauthorized payment.
 
 ### 📌 Finding
-<High-level description of the activity>
+A fraudulent email was sent from **m.smith@lognpacific.org** to **j.reynolds@lognpacific.org** from attacker IP **205.147.16.190**, indicating active impersonation and attempted financial fraud.
 
 ### 🔍 Evidence
 
 | Field | Value |
 |------|-------|
-| Host | <Placeholder> |
-| Timestamp | <Placeholder> |
-| Process | <Placeholder> |
-| Parent Process | <Placeholder> |
-| Command Line | <Placeholder> |
+| Host | Microsoft 365 / Exchange Online |
+| Timestamp | 2026-02-25T22:06:39Z |
+| Process | Email sent (EmailEvents) |
+| Parent Process | Compromised Outlook Web session |
+| Command Line | N/A — cloud-based email activity |
 
 ### 💡 Why it matters
-<Explain impact, risk, and relevance>
+This confirms the final stage of the attack—fraud execution. The attacker leveraged a trusted internal identity to send a convincing invoice email, increasing the likelihood of payment approval. This is the core objective of BEC attacks and represents direct business risk.
 
 ### 🔧 KQL Query Used
 EmailEvents
@@ -842,9 +842,10 @@ EmailEvents
 <img width="1910" height="688" alt="image" src="https://github.com/user-attachments/assets/490011b8-89a4-4073-b072-df5d946a51fc" />
 
 ### 🛠️ Detection Recommendation
+Monitor for outbound emails from compromised accounts, especially those sent from unusual IPs or geolocations. Flag emails containing financial language (e.g., invoice, payment) sent shortly after suspicious sign-ins.
 
 **Hunting Tip:**  
-<Actionable guidance for defenders>
+Query `EmailEvents` for emails sent from compromised users and correlate with `SigninLogs` using `SenderIPv4`. Look for internal recipients receiving financial-themed emails from anomalous IP addresses.
 
 </details>
 
