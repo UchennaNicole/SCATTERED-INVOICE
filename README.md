@@ -99,7 +99,8 @@ Answer what happened, why it matters, and what was discovered in 3–4 sentences
 | 10 | MITRE ATT&CK: T1114.003 – Email Forwarding Rule | T1098 – Account Manipulation | 🔴 MITRE Priority: P1 (Critical) |
 | 11 | MITRE ATT&CK: T1114.003 – Email Forwarding Rule | <T1036 – Masquerading & T1098 – Account Manipulation | 🔴 MITRE Priority: P1 (Critical) |
 | 12 | MITRE ATT&CK: T1114.003 – Email Forwarding Rule | T1041 – Exfiltration Over C2 Channel & T1098 – Account Manipulation | 🔴 MITRE Priority: P1 (Critical) |
-| 13 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
+| 13 | MITRE ATT&CK: T1114.003 – Email Forwarding Rule | T1114.001 – Local Email Collection & T1657 – Financial Theft | 🔴 MITRE Priority: P1 (Critical)
+ |
 | 14 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 | 15 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 | 16 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
@@ -634,23 +635,23 @@ Query `CloudAppEvents` for `ActionType == "New-InboxRule"` and expand rule param
 <summary id="-flag-13">🚩 <strong>Flag 13: <Technique Name></strong></summary>
 
 ### 🎯 Objective
-<What the attacker was trying to accomplish>
+The attacker aimed to selectively capture high-value financial communications (invoices, payments, wire transfers) to facilitate Business Email Compromise and fraudulent fund redirection.
 
 ### 📌 Finding
-<High-level description of the activity>
+The inbox rule was configured with keywords **"invoice, payment, wire, transfer"**, indicating targeted monitoring and forwarding of financial emails. This shows clear intent to intercept sensitive transactions and execute invoice fraud.
 
 ### 🔍 Evidence
 
-| Field | Value |
+|| Field | Value |
 |------|-------|
-| Host | <Placeholder> |
-| Timestamp | <Placeholder> |
-| Process | <Placeholder> |
-| Parent Process | <Placeholder> |
-| Command Line | <Placeholder> |
+| Host | Microsoft 365 / Exchange Online |
+| Timestamp | 2026-02-25T22:02:33Z |
+| Process | New-InboxRule (filtered email forwarding rule) |
+| Parent Process | Compromised Outlook Web session |
+| Command Line | N/A — cloud-based mailbox rule configuration |
 
 ### 💡 Why it matters
-<Explain impact, risk, and relevance>
+Keyword-based filtering demonstrates attacker precision. Instead of forwarding all emails, the attacker targets only financially relevant messages, reducing noise and increasing stealth. This is a hallmark of mature BEC operations focused on maximizing financial gain while minimizing detection.
 
 ### 🔧 KQL Query Used
 CloudAppEvents
@@ -665,9 +666,10 @@ CloudAppEvents
 <img width="2246" height="890" alt="image" src="https://github.com/user-attachments/assets/de155da3-3f88-41bc-9324-2b498e7928ff" />
 
 ### 🛠️ Detection Recommendation
+Monitor for inbox rules containing financial keywords (e.g., invoice, payment, wire, transfer). Alert on rules combining keyword filters with external forwarding. Implement policies to restrict or review keyword-based forwarding rules.
 
 **Hunting Tip:**  
-<Actionable guidance for defenders>
+Query `CloudAppEvents` and expand rule parameters to inspect `SubjectOrBodyContainsWords`. Flag rules that include financial terms, especially when paired with external forwarding addresses and anomalous sign-in activity.
 
 </details>
 
