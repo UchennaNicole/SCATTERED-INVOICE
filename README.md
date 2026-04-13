@@ -97,25 +97,25 @@ Answer what happened, why it matters, and what was discovered in 3–4 sentences
 | 8 | MITRE ATT&CK: T1078.004 – Valid Accounts: Cloud Accounts | T1036 – Masquerading | 🟠 MITRE Priority: P2 (High) |
 | 9 | MITRE ATT&CK: T1114 – Email Collection | T1114.002 – Remote Email Collection | 🔴 MITRE Priority: P1 (Critical) |
 | 10 | MITRE ATT&CK: T1114.003 – Email Forwarding Rule | T1098 – Account Manipulation | 🔴 MITRE Priority: P1 (Critical) |
-| 11 | <Placeholder> | <Placeholder> | <Placeholder> |
-| 12 | <Placeholder> | <Placeholder> | <Placeholder> |
-| 13 | <Placeholder> | <Placeholder> | <Placeholder> |
-| 14 | <Placeholder> | <Placeholder> | <Placeholder> |
-| 15 | <Placeholder> | <Placeholder> | <Placeholder> |
-| 16 | <Placeholder> | <Placeholder> | <Placeholder> |
-| 17 | <Placeholder> | <Placeholder> | <Placeholder> |
-| 18 | <Placeholder> | <Placeholder> | <Placeholder> |
-| 19 | <Placeholder> | <Placeholder> | <Placeholder> |
-| 20 | <Placeholder> | <Placeholder> | <Placeholder> |
-| 21 | <Placeholder> | <Placeholder> | <Placeholder> |
-| 22 | <Placeholder> | <Placeholder> | <Placeholder> |
-| 23 | <Placeholder> | <Placeholder> | <Placeholder> |
-| 24 | <Placeholder> | <Placeholder> | <Placeholder> |
-| 25 | <Placeholder> | <Placeholder> | <Placeholder> |
-| 26 | <Placeholder> | <Placeholder> | <Placeholder> |
-| 27 | <Placeholder> | <Placeholder> | <Placeholder> |
-| 28 | <Placeholder> | <Placeholder> | <Placeholder> |
-| 29 | <Placeholder> | <Placeholder> | <Placeholder> |
+| 11 | MITRE ATT&CK: T1114.003 – Email Forwarding Rule | <T1036 – Masquerading & T1098 – Account Manipulation | 🔴 MITRE Priority: P1 (Critical) |
+| 12 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
+| 13 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
+| 14 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
+| 15 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
+| 16 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
+| 17 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
+| 18 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
+| 19 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
+| 20 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
+| 21 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
+| 22 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
+| 23 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
+| 24 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
+| 25 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
+| 26 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
+| 27 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
+| 28 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
+| 29 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 ---
 
 ## 🔍 Flag Analysis
@@ -547,23 +547,23 @@ Query `CloudAppEvents` for `ActionType == "New-InboxRule"` and correlate with su
 <summary id="-flag-11">🚩 <strong>Flag 11: <Technique Name></strong></summary>
 
 ### 🎯 Objective
-<What the attacker was trying to accomplish>
+The attacker aimed to create a stealthy persistence mechanism by configuring an inconspicuous inbox rule that would avoid user detection while maintaining control over email flow.
 
 ### 📌 Finding
-<High-level description of the activity>
+The attacker created an inbox rule named **"." (single period)**—a minimal, non-descriptive name designed to blend in and evade casual inspection. This indicates deliberate effort to hide persistence within the mailbox.
 
 ### 🔍 Evidence
 
 | Field | Value |
 |------|-------|
-| Host | <Placeholder> |
-| Timestamp | <Placeholder> |
-| Process | <Placeholder> |
-| Parent Process | <Placeholder> |
-| Command Line | <Placeholder> |
+| Host | Microsoft 365 / Exchange Online |
+| Timestamp | 2026-02-25T22:02:33Z |
+| Process | New-InboxRule (mailbox rule creation) |
+| Parent Process | Compromised Outlook Web session |
+| Command Line | N/A — cloud-based mailbox configuration |
 
 ### 💡 Why it matters
-<Explain impact, risk, and relevance>
+Attackers often use subtle naming (e.g., ".", "-", or blank-like values) to hide malicious rules. These rules can silently forward, delete, or move emails—allowing long-term persistence and enabling BEC without alerting the user. This is a strong indicator of deliberate evasion and attacker maturity.
 
 ### 🔧 KQL Query Used
 CloudAppEvents
@@ -577,9 +577,10 @@ CloudAppEvents
 <img width="1192" height="342" alt="image" src="https://github.com/user-attachments/assets/fd1f1310-dbd9-4fbd-ad0e-4c00b65e8b7d" />
 
 ### 🛠️ Detection Recommendation
+Alert on inbox rules with suspicious or minimal names (e.g., ".", "-", blank, or random strings). Monitor for rule creation events from anomalous IPs or devices, especially when paired with recent suspicious sign-ins.
 
 **Hunting Tip:**  
-<Actionable guidance for defenders>
+Query `CloudAppEvents` for `ActionType == "New-InboxRule"` and inspect rule metadata (e.g., name, actions). Flag rules with non-descriptive names and correlate with foreign IP addresses or unmanaged devices to identify hidden persistence.
 
 </details>
 
