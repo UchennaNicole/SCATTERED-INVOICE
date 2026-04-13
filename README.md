@@ -108,7 +108,8 @@ Answer what happened, why it matters, and what was discovered in 3–4 sentences
 | 19 | MITRE ATT&CK: T1566.002 – Phishing: Spearphishing Link | T1078 – Valid Accounts & T1562 – Impair Defenses | 🔴 MITRE Priority: P1 (Critical)|
 | 20 | MITRE ATT&CK: T1078 – Valid Accounts | T1566.002 – Phishing: Spearphishing Link & 1657 – Financial Theft | 🔴 MITRE Priority: P1 (Critical) |
 | 21 | MITRE ATT&CK: T1213 – Data from Information Repositories | T1213.002 – SharePoint / OneDrive & T1078 – Valid Accounts | 🔴 MITRE Priority: P1 (Critical)|
-| 22 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
+| 22 | MITRE ATT&CK: T1213 – Data from Information Repositories | <T1213.002 – SharePoint / OneDrive & T1078 – Valid Accounts | 🔴 MITRE Priority: P1 (Critical)
+ |
 | 23 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 | 24 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 | 25 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
@@ -1028,23 +1029,23 @@ Correlate `SigninLogs` with `CloudAppEvents` across applications. Look for later
 <summary id="-flag-22">🚩 <strong>Flag 22: <Technique Name></strong></summary>
 
 ### 🎯 Objective
-<What the attacker was trying to accomplish>
+The attacker aimed to expand access across the Microsoft 365 environment, exploring shared organizational data repositories for sensitive information and potential exfiltration.
 
 ### 📌 Finding
-<High-level description of the activity>
+The attacker authenticated to **Microsoft SharePoint Online**, indicating access to shared corporate data beyond email and personal storage.
 
 ### 🔍 Evidence
 
 | Field | Value |
 |------|-------|
-| Host | <Placeholder> |
-| Timestamp | <Placeholder> |
-| Process | <Placeholder> |
-| Parent Process | <Placeholder> |
-| Command Line | <Placeholder> |
+| Host | Microsoft 365 / SharePoint Online |
+| Timestamp | 2026-02-25 (during attack window) |
+| Process | Cloud authentication / application access |
+| Parent Process | Compromised authenticated session |
+| Command Line | N/A — cloud-based access |
 
 ### 💡 Why it matters
-<Explain impact, risk, and relevance>
+SharePoint contains shared business-critical data (team files, contracts, financial documents). Access here significantly increases the blast radius of the incident, introducing risk of large-scale data exposure, intellectual property theft, and further lateral movement.
 
 ### 🔧 KQL Query Used
 CloudAppEvents
@@ -1056,9 +1057,10 @@ CloudAppEvents
 <img width="1528" height="756" alt="image" src="https://github.com/user-attachments/assets/6d3f3b0c-a30b-463d-9597-3747ed81c201" />
 
 ### 🛠️ Detection Recommendation
+Monitor `SigninLogs` and `CloudAppEvents` for access to multiple cloud applications from the same session or IP. Alert when compromised identities pivot from email to SharePoint or OneDrive within a short timeframe.
 
 **Hunting Tip:**  
-<Actionable guidance for defenders>
+Correlate application access across `SigninLogs` by IP and user. Look for rapid transitions between services (Exchange → OneDrive → SharePoint), which indicate scope expansion and potential data reconnaissance or exfiltration.
 
 </details>
 
