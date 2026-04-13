@@ -112,7 +112,7 @@ Answer what happened, why it matters, and what was discovered in 3–4 sentences
 | 23 | MITRE ATT&CK: T1078 – Valid Accounts | T1078.004 – Cloud Accounts & T1539 – Steal Web Session Cookie | 🔴 MITRE Priority: P1 (Critical) |
 | 24 | MITRE ATT&CK: T1078 – Valid Accounts | T1556 – Modify Authentication Process & T1621 – Multi-Factor Authentication Request Generation | 🔴 MITRE Priority: P1 (Critical) |
 | 25 | MITRE ATT&CK: T1621 – Multi-Factor Authentication Request Generation | T1078 – Valid Accounts | 🔴 MITRE Priority: P1 (Critical) |
-| 26 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
+| 26 | MITRE ATT&CK: T1564.008 – Hide Artifacts: Email Hiding Rules | <Placeholder> | 🔴 MITRE Priority: P1 (Critical)|
 | 27 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 | 28 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 | 29 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
@@ -1208,22 +1208,25 @@ Query `SigninLogs` for high volumes of MFA requests (`AuthenticationRequirement 
 <summary id="-flag-26">🚩 <strong>Flag 26: <Technique Name></strong></summary>
 
 ### 🎯 Objective
-<What the attacker was trying to accomplish>
+The attacker aimed to evade detection by hiding evidence of their activity within the victim’s mailbox, ensuring fraudulent and security-related emails were not visible to the user.
 
 ### 📌 Finding
-<High-level description of the activity>
+Inbox rules were created (**"." and ".."**) to automatically **forward financial emails to an attacker-controlled account** and **delete security-related messages**, consistent with **MITRE T1564.008 – Email Hiding Rules**.
 
 ### 🔍 Evidence
 
 | Field | Value |
 |------|-------|
-| Host | <Placeholder> |
-| Timestamp | <Placeholder> |
-| Process | <Placeholder> |
-| Parent Process | <Placeholder> |
-| Command Line | <Placeholder> |
+| Host | Microsoft Exchange Online |
+| Timestamp | 2026-02-25T22:02:33Z / 2026-02-25T22:03:59Z |
+| Process | New-InboxRule |
+| Parent Process | Compromised Outlook Web session |
+| Command Line | Rule conditions: forwarding to insights@duck.com; keywords: invoice, payment, wire, transfer / suspicious, security, phishing, unusual, compromised, verify |
 
 ### 💡 Why it matters
+
+This technique allows attackers to operate silently by suppressing indicators of compromise. By hiding both financial communications and security alerts, the attacker reduces the likelihood of detection, prolongs access, and increases the chance of successful fraud.
+
 Inbox rules used to hide attacker activity fall under the Email Hiding Rules sub-technique in MITRE ATT&CK under the Defence Evasion tactic.
 
 T1564.008
@@ -1234,12 +1237,18 @@ Hide Artifacts: Email Hiding Rules — adversaries create inbox rules to automat
 <Add KQL here>
 
 ### 🖼️ Screenshot
-<Insert screenshot>
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/ea7ded52-2ab8-4b3c-98c3-b7a5f1d1efc9" />
 
 ### 🛠️ Detection Recommendation
-
+- Monitor for **New-InboxRule** events, especially with:
+  - External forwarding addresses  
+  - Suspicious keywords (finance or security-related)  
+  - “StopProcessingRules” enabled  
+- Alert on **new rules created shortly after suspicious logins**  
+- Disable or restrict **auto-forwarding to external domains**
+  
 **Hunting Tip:**  
-<Actionable guidance for defenders>
+Query `CloudAppEvents` for `ActionType == "New-InboxRule"` and parse `RawEventData.Parameters`. Look for rules with external forwarding, deletion behavior, or keywords tied to finance or security—these are strong indicators of **T1564.008 activity**.
 
 </details>
 
