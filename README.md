@@ -107,7 +107,7 @@ Answer what happened, why it matters, and what was discovered in 3–4 sentences
 | 18 | MITRE ATT&CK: T1566.002 – Phishing: Spearphishing Link | T1657 – Financial Theft & T1078 – Valid Accounts | 🔴 MITRE Priority: P1 (Critical) |
 | 19 | MITRE ATT&CK: T1566.002 – Phishing: Spearphishing Link | T1078 – Valid Accounts & T1562 – Impair Defenses | 🔴 MITRE Priority: P1 (Critical)|
 | 20 | MITRE ATT&CK: T1078 – Valid Accounts | T1566.002 – Phishing: Spearphishing Link & 1657 – Financial Theft | 🔴 MITRE Priority: P1 (Critical) |
-| 21 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
+| 21 | MITRE ATT&CK: T1213 – Data from Information Repositories | T1213.002 – SharePoint / OneDrive & T1078 – Valid Accounts | 🔴 MITRE Priority: P1 (Critical)|
 | 22 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 | 23 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 | 24 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
@@ -985,23 +985,23 @@ Join `SigninLogs` and `EmailEvents` on `UserPrincipalName` and IP fields. Look f
 <summary id="-flag-21">🚩 <strong>Flag 21: <Technique Name></strong></summary>
 
 ### 🎯 Objective
-<What the attacker was trying to accomplish>
+The attacker aimed to expand access beyond email by exploring and potentially exfiltrating sensitive files stored in the victim’s cloud environment.
 
 ### 📌 Finding
-<High-level description of the activity>
+The attacker accessed files in **Microsoft OneDrive for Business**, indicating potential data exposure beyond the mailbox and expansion of the compromise scope.
 
 ### 🔍 Evidence
 
 | Field | Value |
 |------|-------|
-| Host | <Placeholder> |
-| Timestamp | <Placeholder> |
-| Process | <Placeholder> |
-| Parent Process | <Placeholder> |
-| Command Line | <Placeholder> |
+| Host | Microsoft 365 / OneDrive for Business |
+| Timestamp | 2026-02-25T22:07:16Z |
+| Process | FileAccessed (cloud file interaction) |
+| Parent Process | Compromised authenticated session |
+| Command Line | N/A — cloud-based file access activity |
 
 ### 💡 Why it matters
-<Explain impact, risk, and relevance>
+This confirms the attacker moved beyond BEC into potential data reconnaissance or exfiltration. Access to OneDrive may expose sensitive documents (financial records, contracts, credentials), increasing the risk of further compromise, extortion, or follow-on attacks.
 
 ### 🔧 KQL Query Used
 CloudAppEvents
@@ -1015,9 +1015,10 @@ CloudAppEvents
 <img width="1848" height="664" alt="image" src="https://github.com/user-attachments/assets/739ce2e4-ab12-4252-a8f0-31e7b272b794" />
 
 ### 🛠️ Detection Recommendation
+Monitor `CloudAppEvents` for `ActionType == "FileAccessed"` from anomalous IPs or sessions. Alert on file access activity shortly after suspicious sign-ins, especially across multiple services (Exchange, OneDrive, SharePoint).
 
 **Hunting Tip:**  
-<Actionable guidance for defenders>
+Correlate `SigninLogs` with `CloudAppEvents` across applications. Look for lateral movement patterns where a compromised session transitions from email access to file repositories like OneDrive or SharePoint—this indicates scope expansion.
 
 </details>
 
