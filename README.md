@@ -101,7 +101,7 @@ Answer what happened, why it matters, and what was discovered in 3–4 sentences
 | 12 | MITRE ATT&CK: T1114.003 – Email Forwarding Rule | T1041 – Exfiltration Over C2 Channel & T1098 – Account Manipulation | 🔴 MITRE Priority: P1 (Critical) |
 | 13 | MITRE ATT&CK: T1114.003 – Email Forwarding Rule | T1114.001 – Local Email Collection & T1657 – Financial Theft | 🔴 MITRE Priority: P1 (Critical)|
 | 14 | MITRE ATT&CK: T1114.003 – Email Forwarding Rule | T1564 – Hide Artifacts & T1098 – Account Manipulation | 🔴 MITRE Priority: P1 (Critical) |
-| 15 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
+| 15 | MITRE ATT&CK: T1114.003 – Email Forwarding Rule | T1564 – Hide Artifacts & T1098 – Account Manipulation | 🔴 MITRE Priority: P1 (Critical) |
 | 16 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 | 17 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 | 18 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
@@ -722,23 +722,23 @@ Expand `RawEventData.Parameters` in `CloudAppEvents` and search for `StopProcess
 <summary id="-flag-15">🚩 <strong>Flag 15: <Technique Name></strong></summary>
 
 ### 🎯 Objective
-<What the attacker was trying to accomplish>
+The attacker aimed to enhance persistence and concealment by creating an additional stealthy inbox rule to suppress or manipulate sensitive communications, including potential security alerts.
 
 ### 📌 Finding
-<High-level description of the activity>
+A second inbox rule named **".."** was created shortly after the first. Like the initial rule (“.”), this minimal naming convention is designed to evade detection, indicating layered persistence and defense evasion within the mailbox.
 
 ### 🔍 Evidence
 
 | Field | Value |
 |------|-------|
-| Host | <Placeholder> |
-| Timestamp | <Placeholder> |
-| Process | <Placeholder> |
-| Parent Process | <Placeholder> |
-| Command Line | <Placeholder> |
+| Host | Microsoft 365 / Exchange Online |
+| Timestamp | 2026-02-25T22:03:59Z |
+| Process | New-InboxRule (mailbox rule creation) |
+| Parent Process | Compromised Outlook Web session |
+| Command Line | N/A — cloud-based mailbox configuration |
 
 ### 💡 Why it matters
-<Explain impact, risk, and relevance>
+Multiple stealthily named rules indicate a more sophisticated attacker. While one rule forwards financial emails, another may delete alerts or hide evidence. This layered approach increases dwell time, reduces detection, and ensures continued success of the BEC operation.
 
 ### 🔧 KQL Query Used
 CloudAppEvents
@@ -754,9 +754,10 @@ CloudAppEvents
 <img width="1546" height="866" alt="image" src="https://github.com/user-attachments/assets/727512bb-87e4-4ac3-803c-cec48e627647" />
 
 ### 🛠️ Detection Recommendation
+Detect multiple inbox rule creations within a short timeframe, especially with non-descriptive names (e.g., ".", ".."). Flag rules that perform deletion, forwarding, or suppression actions. Monitor for rule stacking behavior after anomalous logins.
 
 **Hunting Tip:**  
-<Actionable guidance for defenders>
+Query `CloudAppEvents` for `ActionType == "New-InboxRule"` and group by user and time window. Look for multiple rule creations in quick succession, especially with suspicious naming patterns and actions like forwarding or deleting messages.
 
 </details>
 
