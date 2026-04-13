@@ -100,7 +100,7 @@ Answer what happened, why it matters, and what was discovered in 3–4 sentences
 | 11 | MITRE ATT&CK: T1114.003 – Email Forwarding Rule | <T1036 – Masquerading & T1098 – Account Manipulation | 🔴 MITRE Priority: P1 (Critical) |
 | 12 | MITRE ATT&CK: T1114.003 – Email Forwarding Rule | T1041 – Exfiltration Over C2 Channel & T1098 – Account Manipulation | 🔴 MITRE Priority: P1 (Critical) |
 | 13 | MITRE ATT&CK: T1114.003 – Email Forwarding Rule | T1114.001 – Local Email Collection & T1657 – Financial Theft | 🔴 MITRE Priority: P1 (Critical)|
-| 14 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
+| 14 | MITRE ATT&CK: T1114.003 – Email Forwarding Rule | T1564 – Hide Artifacts & T1098 – Account Manipulation | 🔴 MITRE Priority: P1 (Critical) |
 | 15 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 | 16 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 | 17 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
@@ -678,23 +678,23 @@ Query `CloudAppEvents` and expand rule parameters to inspect `SubjectOrBodyConta
 <summary id="-flag-14">🚩 <strong>Flag 14: <Technique Name></strong></summary>
 
 ### 🎯 Objective
-<What the attacker was trying to accomplish>
+The attacker aimed to ensure their malicious inbox rule executed exclusively by preventing any subsequent rules from processing, maximizing stealth and control over targeted emails.
 
 ### 📌 Finding
-<High-level description of the activity>
+The inbox rule was configured with **StopProcessingRules = True**, ensuring that once the attacker’s rule is triggered, no other mailbox rules (including legitimate user rules) are executed.
 
 ### 🔍 Evidence
 
 | Field | Value |
 |------|-------|
-| Host | <Placeholder> |
-| Timestamp | <Placeholder> |
-| Process | <Placeholder> |
-| Parent Process | <Placeholder> |
-| Command Line | <Placeholder> |
+| Host | Microsoft 365 / Exchange Online |
+| Timestamp | 2026-02-25T22:02:33Z |
+| Process | New-InboxRule (mailbox rule configuration) |
+| Parent Process | Compromised Outlook Web session |
+| Command Line | N/A — cloud-based mailbox rule parameter |
 
 ### 💡 Why it matters
-<Explain impact, risk, and relevance>
+This setting ensures complete control over email handling. It prevents legitimate rules (such as alerts, categorization, or forwarding) from executing, allowing the attacker to silently intercept and manipulate sensitive communications without detection. This significantly increases the effectiveness of BEC attacks.
 
 ### 🔧 KQL Query Used
 CloudAppEvents
@@ -709,9 +709,10 @@ CloudAppEvents
 <img width="2260" height="896" alt="image" src="https://github.com/user-attachments/assets/8a186d5e-7c4f-439f-8135-543ac70da242" />
 
 ### 🛠️ Detection Recommendation
+Monitor for inbox rules where **StopProcessingRules = True**, especially when combined with external forwarding or keyword filters. Flag such rules as high-risk and review immediately.
 
 **Hunting Tip:**  
-<Actionable guidance for defenders>
+Expand `RawEventData.Parameters` in `CloudAppEvents` and search for `StopProcessingRules`. Prioritize rules where this is set to `True` alongside suspicious conditions like external forwarding or financial keywords.
 
 </details>
 
