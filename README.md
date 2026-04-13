@@ -102,7 +102,7 @@ Answer what happened, why it matters, and what was discovered in 3–4 sentences
 | 13 | MITRE ATT&CK: T1114.003 – Email Forwarding Rule | T1114.001 – Local Email Collection & T1657 – Financial Theft | 🔴 MITRE Priority: P1 (Critical)|
 | 14 | MITRE ATT&CK: T1114.003 – Email Forwarding Rule | T1564 – Hide Artifacts & T1098 – Account Manipulation | 🔴 MITRE Priority: P1 (Critical) |
 | 15 | MITRE ATT&CK: T1114.003 – Email Forwarding Rule | T1564 – Hide Artifacts & T1098 – Account Manipulation | 🔴 MITRE Priority: P1 (Critical) |
-| 16 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
+| 16 | MITRE ATT&CK: T1564 – Hide Artifacts | <T1114.003 – Email Forwarding Rule & T1098 – Account Manipulation | 🔴 MITRE Priority: P1 (Critical) |
 | 17 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 | 18 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 | 19 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
@@ -767,23 +767,23 @@ Query `CloudAppEvents` for `ActionType == "New-InboxRule"` and group by user and
 <summary id="-flag-16">🚩 <strong>Flag 16: <Technique Name></strong></summary>
 
 ### 🎯 Objective
-<What the attacker was trying to accomplish>
+The attacker aimed to hide evidence of the compromise by automatically suppressing or deleting security-related emails that could alert the user or security team.
 
 ### 📌 Finding
-<High-level description of the activity>
+A second inbox rule was configured with keywords **"suspicious, security, phishing, unusual, compromised, verify"**, indicating targeted suppression of security alerts and breach notifications.
 
 ### 🔍 Evidence
 
 | Field | Value |
 |------|-------|
-| Host | <Placeholder> |
-| Timestamp | <Placeholder> |
-| Process | <Placeholder> |
-| Parent Process | <Placeholder> |
-| Command Line | <Placeholder> |
+| Host | Microsoft 365 / Exchange Online |
+| Timestamp | 2026-02-25T22:03:59Z |
+| Process | New-InboxRule (filtered email rule for suppression) |
+| Parent Process | Compromised Outlook Web session |
+| Command Line | N/A — cloud-based mailbox rule configuration |
 
 ### 💡 Why it matters
-<Explain impact, risk, and relevance>
+This rule demonstrates deliberate defense evasion. By filtering out security-related keywords, the attacker ensures the victim never sees warnings about suspicious activity, password resets, or compromise alerts. This significantly increases dwell time and allows the attacker to operate undetected while executing fraud.
 
 ### 🔧 KQL Query Used
 CloudAppEvents
@@ -799,9 +799,10 @@ CloudAppEvents
 <img width="1598" height="844" alt="image" src="https://github.com/user-attachments/assets/3ce3a99a-f491-4283-8a88-7aa614f5013a" />
 
 ### 🛠️ Detection Recommendation
+Alert on inbox rules containing security-related keywords (e.g., suspicious, phishing, compromised). Monitor for rules that delete or move these messages to hidden folders. Combine this with anomalous sign-in detection for high-confidence compromise alerts.
 
 **Hunting Tip:**  
-<Actionable guidance for defenders>
+Query `CloudAppEvents` and expand `SubjectOrBodyContainsWords`. Flag rules targeting security-related terms, especially when paired with external forwarding rules or created from foreign IP addresses and unmanaged devices.
 
 </details>
 
