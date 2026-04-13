@@ -115,7 +115,7 @@ Answer what happened, why it matters, and what was discovered in 3–4 sentences
 | 26 | MITRE ATT&CK: T1564.008 – Hide Artifacts: Email Hiding Rules | <Placeholder> | 🔴 MITRE Priority: P1 (Critical)|
 | 27 | MITRE ATT&CK: T1555 – Credentials from Password Stores | T1555.003 – Credentials from Web Browsers | 🔴 MITRE Priority: P1 (Critical) |
 | 28 | MITRE ATT&CK: T1078 – Valid Accounts | T1078.004 – Cloud Accounts | 🔴 MITRE Priority: P1 (Critical) |
-| 29 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
+| 29 | MITRE ATT&CK: Group: G1015 – Scattered Spider (UNC3944 / Octo Tempest) | T1621 – MFA Fatigue & T1078 – Valid Accounts & T1564.008 – Email Hiding Rules & T1213.002 – SharePoint/OneDrive access & T1566.002 – Phishing/BEC | 🔴 MITRE Priority: P1 (Critical)|
 ---
 
 ## 🔍 Flag Analysis
@@ -1346,22 +1346,24 @@ When compromise is confirmed, do not delay containment. Pivot from investigation
 <summary id="-flag-29">🚩 <strong>Flag 29: <Technique Name></strong></summary>
 
 ### 🎯 Objective
-<What the attacker was trying to accomplish>
+The attacker aimed to compromise a corporate account, maintain persistence, conduct business email compromise (BEC), and potentially exfiltrate sensitive data for financial gain.
 
 ### 📌 Finding
-<High-level description of the activity>
+The observed tactics, techniques, and procedures (TTPs) align with **Scattered Spider**, a financially motivated threat group known for MFA fatigue, social engineering, and Microsoft 365 account takeovers.
 
 ### 🔍 Evidence
 
 | Field | Value |
 |------|-------|
-| Host | <Placeholder> |
-| Timestamp | <Placeholder> |
-| Process | <Placeholder> |
-| Parent Process | <Placeholder> |
-| Command Line | <Placeholder> |
+| Host | Microsoft 365 / Azure AD environment |
+| Timestamp | 2026-02-25 attack timeline |
+| Process | MFA fatigue → valid login → inbox rule creation → internal phishing → data access |
+| Parent Process | Credential access via infostealer + MFA push bombing |
+| Command Line | N/A — cloud-native attacker activity (living-off-the-land) |
 
 ### 💡 Why it matters
+Attributing this activity to **Scattered Spider** provides critical context for response and defense. This group is known for targeting large enterprises, especially in finance, retail, and hospitality, using sophisticated social engineering and identity-based attacks. Their playbook indicates a high likelihood of **repeat attempts, lateral targeting, and financial fraud escalation**.
+
 Every TTP in this investigation matches their known playbook: MFA fatigue/push bombing, help desk social engineering, BEC targeting finance teams, use of legitimate cloud infrastructure, and high-profile attacks on MGM Resorts and Caesars Entertainment in 2023.
 
 Scattered Spider
@@ -1372,12 +1374,17 @@ Also tracked as UNC3944 and Octo Tempest by various vendors. A financially motiv
 <Add KQL here>
 
 ### 🖼️ Screenshot
-<Insert screenshot>
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/35c24771-f913-4e7d-91d1-18accb070be2" />
 
 ### 🛠️ Detection Recommendation
-
+- Monitor for **MFA fatigue patterns (T1621)**  
+- Alert on **inbox rule creation and external forwarding (T1564.008)**  
+- Track **valid account abuse across multiple cloud services (T1078)**  
+- Implement **phishing-resistant MFA and strict Conditional Access policies**  
+- Leverage threat intelligence feeds to track **Scattered Spider IOCs and behaviors**
+  
 **Hunting Tip:**  
-<Actionable guidance for defenders>
+Hunt for combined signals rather than single events: MFA fatigue + anomalous login + inbox rule creation + internal phishing. This behavioral chain is a strong indicator of **Scattered Spider activity**.
 
 </details>
 
