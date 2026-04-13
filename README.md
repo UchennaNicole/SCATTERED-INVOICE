@@ -114,7 +114,7 @@ Answer what happened, why it matters, and what was discovered in 3–4 sentences
 | 25 | MITRE ATT&CK: T1621 – Multi-Factor Authentication Request Generation | T1078 – Valid Accounts | 🔴 MITRE Priority: P1 (Critical) |
 | 26 | MITRE ATT&CK: T1564.008 – Hide Artifacts: Email Hiding Rules | <Placeholder> | 🔴 MITRE Priority: P1 (Critical)|
 | 27 | MITRE ATT&CK: T1555 – Credentials from Password Stores | T1555.003 – Credentials from Web Browsers | 🔴 MITRE Priority: P1 (Critical) |
-| 28 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
+| 28 | MITRE ATT&CK: T1078 – Valid Accounts | T1078.004 – Cloud Accounts | 🔴 MITRE Priority: P1 (Critical) |
 | 29 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 ---
 
@@ -1304,34 +1304,39 @@ Search endpoint telemetry for processes accessing browser credential stores (e.g
 <summary id="-flag-28">🚩 <strong>Flag 28: <Technique Name></strong></summary>
 
 ### 🎯 Objective
-<What the attacker was trying to accomplish>
+The attacker aimed to maintain active access using a valid session to continue fraud, persistence, and data access within the environment.
 
 ### 📌 Finding
-<High-level description of the activity>
+The attacker still has an **active authenticated session** and persistent inbox rules in place. Immediate containment is required to terminate access.
 
 ### 🔍 Evidence
 
 | Field | Value |
 |------|-------|
-| Host | <Placeholder> |
-| Timestamp | <Placeholder> |
-| Process | <Placeholder> |
-| Parent Process | <Placeholder> |
-| Command Line | <Placeholder> |
+| Host | Azure AD / Microsoft 365 |
+| Timestamp | Active session during attack window |
+| Process | Authenticated cloud session (AADSessionId) |
+| Parent Process | Successful compromised login (MFA fatigue) |
+| Command Line | N/A — cloud session activity |
 
 ### 💡 Why it matters
+As long as the account remains active, the attacker retains full access — including email, file storage, and internal communication. Disabling the account immediately **kills all active sessions**, stops ongoing malicious activity, and prevents further damage. This is the fastest and most effective containment action in a BEC incident.
+
 Disabling the account immediately blocks all access — session, password, everything — in a single action. It's often cited as the single most important first containment step in BEC incidents.
 
 ### 🔧 KQL Query Used
 <Add KQL here>
 
 ### 🖼️ Screenshot
-<Insert screenshot>
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/290e980f-a1c1-42b2-afdc-b036d522f132" />
 
 ### 🛠️ Detection Recommendation
+- Monitor for active sessions tied to compromised accounts  
+- Trigger high-severity alerts when confirmed compromise is detected  
+- Establish automated playbooks to **disable accounts immediately upon confirmation**  
 
 **Hunting Tip:**  
-<Actionable guidance for defenders>
+When compromise is confirmed, do not delay containment. Pivot from investigation to action—**terminate access first (disable account), then proceed with remediation** such as password resets, session revocation, and inbox rule cleanup.
 
 </details>
 
