@@ -110,7 +110,7 @@ Answer what happened, why it matters, and what was discovered in 3–4 sentences
 | 21 | MITRE ATT&CK: T1213 – Data from Information Repositories | T1213.002 – SharePoint / OneDrive & T1078 – Valid Accounts | 🔴 MITRE Priority: P1 (Critical)|
 | 22 | MITRE ATT&CK: T1213 – Data from Information Repositories | <T1213.002 – SharePoint / OneDrive & T1078 – Valid Accounts | 🔴 MITRE Priority: P1 (Critical)|
 | 23 | MITRE ATT&CK: T1078 – Valid Accounts | T1078.004 – Cloud Accounts & T1539 – Steal Web Session Cookie | 🔴 MITRE Priority: P1 (Critical) |
-| 24 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
+| 24 | MITRE ATT&CK: T1078 – Valid Accounts | T1556 – Modify Authentication Process & T1621 – Multi-Factor Authentication Request Generation | 🔴 MITRE Priority: P1 (Critical) |
 | 25 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 | 26 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
 | 27 | MITRE ATT&CK: | <Placeholder> | <Placeholder> |
@@ -1113,23 +1113,23 @@ When investigating cloud compromises, pivot on session identifiers—not just us
 <summary id="-flag-24">🚩 <strong>Flag 24: <Technique Name></strong></summary>
 
 ### 🎯 Objective
-<What the attacker was trying to accomplish>
+The attacker aimed to successfully authenticate and operate within the environment without being blocked by Conditional Access controls.
 
 ### 📌 Finding
-<High-level description of the activity>
+The attacker’s successful sign-in shows **ConditionalAccessStatus: notApplied**, meaning no Conditional Access policies were enforced during authentication.
 
 ### 🔍 Evidence
 
 | Field | Value |
 |------|-------|
-| Host | <Placeholder> |
-| Timestamp | <Placeholder> |
-| Process | <Placeholder> |
-| Parent Process | <Placeholder> |
-| Command Line | <Placeholder> |
+| Host | Azure AD / Microsoft 365 |
+| Timestamp | 2026-02-25 attack window |
+| Process | Successful authentication (SigninLogs) |
+| Parent Process | MFA fatigue / push approval compromise |
+| Command Line | N/A — cloud-based authentication |
 
 ### 💡 Why it matters
-<Explain impact, risk, and relevance>
+This represents a critical defensive gap. Despite the attacker logging in from a foreign IP, unmanaged Linux device, and anomalous context, Conditional Access policies were not applied. Properly configured policies (e.g., block risky sign-ins, require compliant devices, enforce location restrictions) could have prevented the compromise entirely.
 
 ### 🔧 KQL Query Used
 SigninLogs
@@ -1143,9 +1143,14 @@ SigninLogs
 <img width="1908" height="818" alt="image" src="https://github.com/user-attachments/assets/55f264a5-6f14-4ac7-bdf5-c789ea035b4e" />
 
 ### 🛠️ Detection Recommendation
-
+Implement and enforce Conditional Access policies such as:
+- Require compliant or managed devices
+- Block or challenge logins from unfamiliar locations
+- Enforce risk-based authentication (Azure AD Identity Protection)
+- Require phishing-resistant MFA methods (FIDO2, number matching)
+  
 **Hunting Tip:**  
-<Actionable guidance for defenders>
+Query `SigninLogs` for `ConditionalAccessStatus == "notApplied"` on successful logins. Prioritize investigation of sessions from unfamiliar IPs, devices, or geolocations where no Conditional Access policies were enforced—these are prime entry points for attackers.
 
 </details>
 
