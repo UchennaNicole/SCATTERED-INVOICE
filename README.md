@@ -1393,27 +1393,35 @@ Hunt for combined signals rather than single events: MFA fatigue + anomalous log
 ## 🚨 Detection Gaps & Recommendations
 
 ### Observed Gaps
-- <Placeholder>
-- <Placeholder>
-- <Placeholder>
+- **No Conditional Access enforcement:** The attacker's session showed `ConditionalAccessStatus: notApplied`, meaning sign-ins from unmanaged Linux devices, foreign IPs, and anomalous geolocations were never challenged or blocked. A compliant device policy or location-based restriction would have stopped the attack before MFA was even reached.
+- **No MFA fatigue detection:** Multiple `ResultType 50074` failures from a Netherlands IP targeting a single user within minutes generated no alert. The pattern of repeated MFA failures followed by a single approval — a textbook push bombing sequence — was not detected in real time, allowing the compromise to proceed uncontested.
+- **No outbound email forwarding controls:** The attacker successfully created an inbox rule forwarding financial emails to an external Duck.com address without triggering any alert or policy block. Auto-forwarding to external domains is a well-known BEC indicator and should have been restricted or flagged at the tenant level.
 
 ### Recommendations
-- <Placeholder>
-- <Placeholder>
-- <Placeholder>
+- **Implement phishing-resistant MFA and Conditional Access policies:** Replace push-based MFA with number matching or FIDO2 hardware keys to eliminate MFA fatigue as an attack vector. Enforce Conditional Access policies requiring compliant, managed devices and blocking or challenging sign-ins from unfamiliar countries, especially for high-risk roles like finance personnel.
+- **Deploy real-time alerting for MFA fatigue patterns and inbox rule creation:** Build Sentinel analytic rules to alert on three or more `ResultType 50074` events within a 10-minute window for a single user, followed by a successful login from the same IP. Separately, alert on any `New-InboxRule` event created from an IP or device that differs from the user's established baseline — particularly rules involving external forwarding addresses or security-related keyword deletion.
+- **Restrict and monitor external email forwarding at the tenant level:** Configure Exchange Online transport rules to block or quarantine auto-forwarding to external domains. Implement Microsoft Purview Data Loss Prevention policies to flag outbound emails containing financial keywords sent from anomalous sessions. Combine this with regular audits of inbox rules across all mailboxes, with automated alerting for rules using minimal or obfuscated names such as single characters or punctuation.
 
 ---
 
 ## 🧾 Final Assessment
 
-<Concise executive-style conclusion summarizing risk, attacker sophistication, and defensive posture.>
+This incident represents a sophisticated, end-to-end Business Email Compromise executed by a threat actor consistent with **Scattered Spider (UNC3944)**. The attacker demonstrated strong operational tradecraft — obtaining valid credentials through infostealer malware prior to the attack, bypassing MFA through deliberate push bombing, and immediately pivoting to email reconnaissance, covert inbox rule persistence, and targeted thread hijacking within a 35-minute window.
+
+The £24,500 fraudulent wire transfer was only intercepted through bank-side fraud detection — not internal controls. Every stage of the kill chain, from initial access to fraud execution, proceeded without triggering a single internal alert. The absence of Conditional Access enforcement, MFA fatigue detection, and external forwarding restrictions created the conditions for a near-total failure of preventive and detective controls.
+
+The attacker's infrastructure — a Netherlands-based IP, unmanaged Ubuntu Linux endpoint, Firefox browser, and Duck.com exfiltration address — leaves a clear forensic trail across `SigninLogs`, `CloudAppEvents`, and `EmailEvents`, all tied together by a single AAD session ID. While attribution to Scattered Spider is high-confidence based on TTP alignment, the more pressing concern is the defensive posture: this attack would succeed again today without immediate remediation of the gaps identified above.
+
+**Risk Rating: Critical.** Identity controls are insufficient for the threat environment LogN Pacific operates in. Immediate action is required on Conditional Access, MFA method uplift, and mailbox monitoring before this threat actor — or any actor using the same playbook — attempts re-entry.
 
 ---
 
 ## 📎 Analyst Notes
 
-- Report structured for interview and portfolio review  
-- Evidence reproducible via advanced hunting  
-- Techniques mapped directly to MITRE ATT&CK  
+- Report structured for interview and portfolio review
+- Evidence reproducible via advanced KQL hunting across `SigninLogs`, `CloudAppEvents`, and `EmailEvents` in Microsoft Sentinel workspace `law-cyber-range`
+- Techniques mapped directly to MITRE ATT&CK framework across all 29 flags
+- All IOCs (IP: `205.147.16.190`, exfil address: `insights@duck.com`, session ID: `00225cfa-a0ff-fb46-a079-5d152fcdf72a`) are simulated infrastructure — treat as live during the engagement per OPSEC rules of engagement
+- Attack chain confirmed end-to-end: credential theft → MFA fatigue → account takeover → inbox rule persistence → thread hijacking → BEC fraud execution → cloud data access
 
 ---
